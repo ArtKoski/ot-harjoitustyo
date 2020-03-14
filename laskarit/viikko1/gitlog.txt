@@ -1,0 +1,105 @@
+commit 0fb36dce1925ef35b9f97893035180eebdd93e7e
+Author: Arttu <arcez@hotmail.fi>
+Date:   Sat Mar 14 11:11:33 2020 +0200
+
+    f1 poistettu, f2 nimi muutettu -> f22
+
+ tiedostoja/file1 | 0
+ tiedostoja/file2 | 0
+ 2 files changed, 0 insertions(+), 0 deletions(-)
+
+commit 28708d8243530913d44214037278da24c57434b0
+Author: Arttu <arcez@hotmail.fi>
+Date:   Sat Mar 14 11:08:08 2020 +0200
+
+    add: kolme tiedostoa
+
+ tiedostoja/file1 | 0
+ tiedostoja/file2 | 0
+ tiedostoja/file3 | 0
+ 3 files changed, 0 insertions(+), 0 deletions(-)
+
+commit 22f12c03575d474a2f6a9c93f8d4e2e39cd00b6d
+Author: Arttu <arcez@hotmail.fi>
+Date:   Sat Mar 14 10:40:31 2020 +0200
+
+    changes: eka ja kolmas
+
+ eka.txt    | 5 +++++
+ kolmas.txt | 1 +
+ 2 files changed, 6 insertions(+)
+
+commit 82bc7a6c7e723a55a32db8dbfeced8dc7349e676
+Author: Arttu <arcez@hotmail.fi>
+Date:   Sat Mar 14 10:37:42 2020 +0200
+
+    nameChange
+
+ tiedosto.txt => eka.txt | 0
+ 1 file changed, 0 insertions(+), 0 deletions(-)
+
+commit 1ceda00a69be9f898d74af3b5a2752a6514c0794
+Author: Arttu <arcez@hotmail.fi>
+Date:   Sat Mar 14 10:35:49 2020 +0200
+
+    removed: toinen deleted :)
+
+ toinen.txt | 1 -
+ 1 file changed, 1 deletion(-)
+
+commit 6b055d7f9d22a28685825bb664abed57f8e520bb
+Author: Arttu <arcez@hotmail.fi>
+Date:   Sat Mar 14 10:30:31 2020 +0200
+
+    change: poistettu tekstiä
+
+ tiedosto.txt | 75 ------------------------------------------------------------
+ 1 file changed, 75 deletions(-)
+
+commit 2e67ef1dfaf7d80c27bf9cf328610908dd4a5410
+Author: Arttu <arcez@hotmail.fi>
+Date:   Sat Mar 14 10:29:38 2020 +0200
+
+    Change: lisätty tekstiä
+
+ tiedosto.txt | 617 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 617 insertions(+)
+
+commit 466c8cd820a800f341ec560a47ade1984194c558
+Author: Arttu <arcez@hotmail.fi>
+Date:   Sat Mar 14 10:24:22 2020 +0200
+
+    ADD: stuff lisätty
+
+ stuff/interestingstuff | 0
+ 1 file changed, 0 insertions(+), 0 deletions(-)
+
+commit 4fe2a49a23bdeb2becd706665a728f56c1b74c6b
+Author: Arttu <arcez@hotmail.fi>
+Date:   Sat Mar 14 10:21:41 2020 +0200
+
+    change: kolmas ja toinen muutettu
+
+ kolmas.txt | 1 +
+ toinen.txt | 1 +
+ 2 files changed, 2 insertions(+)
+
+commit 696324b71c83fe6d4471eea3fd1c1f34dcf455a4
+Author: Arttu <arcez@hotmail.fi>
+Date:   Sat Mar 14 10:13:25 2020 +0200
+
+    muutos ja lisäys
+
+ tiedosto.txt | 1 +
+ toinen.txt   | 0
+ 2 files changed, 1 insertion(+)
+
+commit c4a5168fadf27928e3ebcd06fb606ba0f63aabff
+Author: Arttu <arcez@hotmail.fi>
+Date:   Sat Mar 14 09:53:56 2020 +0200
+
+    tiedosto.txt luotu
+
+ tiedosto.txt | 0
+ 1 file changed, 0 insertions(+), 0 deletions(-)
+

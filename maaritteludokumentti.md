@@ -1,20 +1,20 @@
-## _Vaatimusmäärittely_
+## *Vaatimusmäärittely*
 
-# _Sovelluksen tarkoitus_
+# *Sovelluksen tarkoitus*
 Sovellus on pienimuotoinen Asteroids-tyyppinen peli, jossa tarkoitus on selvitä
 ja kerätä pisteitä.
 
-# _Käyttäjät_
+# *Käyttäjät*
 1. Peruskäyttäjä
 (2.) Admin/GodMode? Ei prioriteetti.
 
-# _Käyttöliittymä_
+# *Käyttöliittymä*
 1a) Sisäänkirjautuminen käyttäjälle, jonka jälkeen pääsee peliin
 1b) Ei sisäänkirjautumista, mutta pelin päätyttyä nimen ja pisteiden tallennus
 
 Näkymiä yhteensä ainakin: 1. Alkuruutu, (2. Tunnuksen tekeminen), 3. Itse peli
 
-# _Perusversion toiminnallisuus_
+# *Perusversion toiminnallisuus*
 _Ennen kirjautumista_
 -Käyttäjätunnuksen luonti
 -Sisäänkirjautuminen
@@ -27,7 +27,7 @@ TAI
 -Hahmo "kuolee" jos osuu muihin objekteihin
 -Toiminnallisuus tuhota muita objekteja, josta saa pisteitä
 
-# _Jatkokehitysideoita_
+# *Jatkokehitysideoita*
 -Hiscoret
 -Hahmon tavat tuhota objekteja (pyssy vai miekka)
 -Vihollisobjektien progressiivinen vaikeutuminen

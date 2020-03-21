@@ -1,7 +1,6 @@
 ## OTSIKKO
 
-En *vielä* tiedä projektini aihetta, mutta
-mielessä on **Tower Defense** tyyppinen _peli._
+Aiheena on Asteroids-tyyppinen selviytymispeli.
 
 https://github.com/ArtKoski/ot-harjoitustyo/tree/master/laskarit/viikko1/komentorivi.txt
 

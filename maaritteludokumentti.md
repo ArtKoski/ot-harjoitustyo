@@ -28,8 +28,8 @@ TAI
 -Toiminnallisuus tuhota muita objekteja, josta saa pisteitä
 
 ## *Jatkokehitysideoita*
--Hiscoret
--Hahmon tavat tuhota objekteja (pyssy vai miekka)
--Vihollisobjektien progressiivinen vaikeutuminen
--Boss-vihollinen
+-Hiscoret			
+-Hahmon tavat tuhota objekteja (pyssy vai miekka)		
+-Vihollisobjektien progressiivinen vaikeutuminen		
+-Boss-vihollinen		
 	-Ampuu hahmoa kohti??

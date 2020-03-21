@@ -20,7 +20,7 @@ _Ennen kirjautumista_
 -Sisäänkirjautuminen\
 TAI
 -Start-nappula josta peliin\
--Pelin päätyttyä kysytään nimeä, joka voidaan sitten tallentaa halutulla tavalla\
+-Pelin päätyttyä kysytään nimeä, joka voidaan sitten tallentaa halutulla tavalla
 
  _Itse peli_\
 -Käyttäjän kontrolloima hahmo\
@@ -28,8 +28,8 @@ TAI
 -Toiminnallisuus tuhota muita objekteja, josta saa pisteitä\
 
 ## *Jatkokehitysideoita*
--Hiscoret\		
--Hahmon tavat tuhota objekteja (pyssy vai miekka)\	
--Vihollisobjektien progressiivinen vaikeutuminen\		
--Boss-vihollinen\		
-	-Ampuu hahmoa kohti??\
+-Hiscoret\	
+-Hahmon tavat tuhota objekteja (pyssy vai miekka)\
+-Vihollisobjektien progressiivinen vaikeutuminen\	
+-Boss-vihollinen\
+	-Ampuu hahmoa kohti??

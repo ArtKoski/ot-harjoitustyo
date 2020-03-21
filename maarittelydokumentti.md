@@ -25,11 +25,11 @@ TAI
  _Itse peli_\
 -Käyttäjän kontrolloima hahmo\
 -Hahmo "kuolee" jos osuu muihin objekteihin\
--Toiminnallisuus tuhota muita objekteja, josta saa pisteitä\
+-Toiminnallisuus tuhota muita objekteja, josta saa pisteitä
 
 ## *Jatkokehitysideoita*
--Hiscoret\	
+-Hiscoret\
 -Hahmon tavat tuhota objekteja (pyssy vai miekka)\
--Vihollisobjektien progressiivinen vaikeutuminen\	
+-Vihollisobjektien progressiivinen vaikeutuminen\
 -Boss-vihollinen\
-	-Ampuu hahmoa kohti??
+-Ampuu hahmoa kohti??

@@ -28,8 +28,8 @@ import tdf.tdf.Hahmo;
  */
 public class SovellusEhka extends Application {
 
-    private static final int KEYBOARD_MOVEMENT_DELTA = 5;
-
+    public static int LEVEYS = 600;
+    public static int KORKEUS = 400;
     private Scene peliNakyma;
     private Scene alkuNakyma;
 
@@ -37,7 +37,7 @@ public class SovellusEhka extends Application {
     public void start(Stage ikkuna) {
         //ALKURUUTU
         Pane ruutu = new Pane();
-        ruutu.setPrefSize(600, 400);
+        ruutu.setPrefSize(LEVEYS, KORKEUS);
 
         Button nappi = new Button("START");
         ruutu.getChildren().add(nappi);
@@ -46,13 +46,14 @@ public class SovellusEhka extends Application {
 
         //Pelinäkymä
         Pane peliRuutu = new Pane();
-        peliRuutu.setPrefSize(600, 400);
+        peliRuutu.setPrefSize(LEVEYS, KORKEUS);
 
         Hahmo ukkeli = new Hahmo(150, 100);
+
+        //moveCircleOnKeyPress(peliNakyma, ukkeli);
         peliRuutu.getChildren().add(ukkeli.getHahmo());
 
         peliNakyma = new Scene(peliRuutu);
-        moveCircleOnKeyPress(peliNakyma, ukkeli);
 
         Map<KeyCode, Boolean> painetutNapit = new HashMap<>();
 
@@ -63,30 +64,29 @@ public class SovellusEhka extends Application {
         peliNakyma.setOnKeyReleased(event -> {
             painetutNapit.put(event.getCode(), Boolean.FALSE);
         });
-        new AnimationTimer() {
 
+        new AnimationTimer() {
             @Override
             public void handle(long nykyhetki) {
-
-                if (painetutNapit.getOrDefault(KeyCode.UP, Boolean.FALSE)) {
-                    ukkeli.liike.add(ukkeli.getLiike().getX(), ukkeli.liike.getY() - KEYBOARD_MOVEMENT_DELTA);
+                if (painetutNapit.getOrDefault(KeyCode.LEFT, false)) {
+                    ukkeli.vasemmalle();
                 }
 
-                if (painetutNapit.getOrDefault(KeyCode.RIGHT, Boolean.FALSE)) {
-                    ukkeli.liike.add(ukkeli.liike.getX() + KEYBOARD_MOVEMENT_DELTA, ukkeli.getLiike().getY());
+                if (painetutNapit.getOrDefault(KeyCode.RIGHT, false)) {
+                    ukkeli.oikealle();
+                }
+                if (painetutNapit.getOrDefault(KeyCode.DOWN, false)) {
+                    ukkeli.hidasta();
                 }
 
-                if (painetutNapit.getOrDefault(KeyCode.DOWN, Boolean.FALSE)) {
-                    ukkeli.liike.add(ukkeli.getLiike().getX(), ukkeli.liike.getY() + KEYBOARD_MOVEMENT_DELTA);
+                if (painetutNapit.getOrDefault(KeyCode.UP, false)) {
+                    ukkeli.kiihdyta();
+                    ukkeli.liiku();
                 }
 
-                if (painetutNapit.getOrDefault(KeyCode.LEFT, Boolean.FALSE)) {
-                    ukkeli.liike.add(ukkeli.liike.getX() - KEYBOARD_MOVEMENT_DELTA, ukkeli.getLiike().getY());
-                }
             }
-
         }.start();
-
+       
         nappi.setOnAction(click -> {
             ikkuna.setScene(peliNakyma);
         });
@@ -100,23 +100,23 @@ public class SovellusEhka extends Application {
     public static void main(String[] args) {
         launch(args);
     }
-
+    
     private void moveCircleOnKeyPress(Scene scene, Hahmo hahmo) {
         scene.setOnKeyPressed(new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent event) {
                 switch (event.getCode()) {
                     case UP:
-                        hahmo.liike.add(hahmo.getLiike().getX(), hahmo.liike.getY() - KEYBOARD_MOVEMENT_DELTA);
+                        hahmo.liike = hahmo.liike.add(hahmo.getLiike().getX(), hahmo.liike.getY() - 0.5);
                         break;
                     case RIGHT:
-                        hahmo.liike.add(hahmo.liike.getX() + KEYBOARD_MOVEMENT_DELTA, hahmo.getLiike().getY());
+                        hahmo.liike = hahmo.liike.add(hahmo.liike.getX() + 0.5, hahmo.getLiike().getY());
                         break;
                     case DOWN:
-                        hahmo.liike.add(hahmo.getLiike().getX(), hahmo.liike.getY() + KEYBOARD_MOVEMENT_DELTA);
+                        hahmo.liike = hahmo.liike.add(hahmo.getLiike().getX(), hahmo.liike.getY() + 0.5);
                         break;
                     case LEFT:
-                        hahmo.liike.add(hahmo.liike.getX() - KEYBOARD_MOVEMENT_DELTA, hahmo.getLiike().getY());
+                        hahmo.liike = hahmo.liike.add(hahmo.liike.getX() - 0.5, hahmo.getLiike().getY());
                         break;
                 }
             }

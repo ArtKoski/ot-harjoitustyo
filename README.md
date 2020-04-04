@@ -11,3 +11,4 @@ sekä testien komennoilla mvn test & mvn test jacoco:report
 ### **Dokumentaatio**
 [Vaatimuusmäärittely](https://github.com/ArtKoski/ot-harjoitustyo/blob/master/TDF/dokumentaatio/maarittelydokumentti.md)  
 [Työaikakirjanpito](https://github.com/ArtKoski/ot-harjoitustyo/blob/master/TDF/dokumentaatio/tuntikirjanpito.md)  
+[Arkkitehtuurikuvaus](https://github.com/ArtKoski/ot-harjoitustyo/blob/master/TDF/dokumentaatio/arkkitehtuuri.md)

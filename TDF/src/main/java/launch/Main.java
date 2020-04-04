@@ -10,11 +10,11 @@ package launch;
  *
  * @author artkoski
  */
-import tdf.tdf.SovellusEhka;
+import Ui.GUI;
 
 public class Main {
 
     public static void main(String[] args) {
-        SovellusEhka.main(args);
+        GUI.main(args);
     }
 }

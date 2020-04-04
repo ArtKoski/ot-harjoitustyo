@@ -10,4 +10,6 @@
 |3.4	|5	|Lisätty: Ammukset, vihollisen pohjaluokka, |
 |	|	|ominaisuuksia liikkumiseen liittyen &	|
 |	|	|entityn "kuoleminen"			|
-
+|4.4	|3	|Testien lisääminen, pakkauskaavion luonti, |
+|	|	|sekä repositiorion siistiminen 	|
+|	|	|					|

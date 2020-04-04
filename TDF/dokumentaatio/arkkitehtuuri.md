@@ -1,3 +1,3 @@
 
 ### Pakkausrakenne 
-<img src="https://github.com/ArtKoski/ot-harjoitustyo/tree/master/TDF/dokumentaatio/kuvat/draft.png">
+<img src="https://raw.githubusercontent.com/ArtKoski/ot-harjoitustyo/tree/master/TDF/dokumentaatio/kuvat/draft.png">

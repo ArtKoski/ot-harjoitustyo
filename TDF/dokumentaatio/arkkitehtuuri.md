@@ -1,3 +1,4 @@
 
 ### Pakkausrakenne 
-![alt text](https://github.com/ArtKoski/ot-harjoitustyo/tree/master/TDF/dokumentaatio/kuvat/draft.png "rough draft")
+
+![asd](https://github.com/ArtKoski/ot-harjoitustyo/tree/master/TDF/dokumentaatio/kuvat/draft.png)

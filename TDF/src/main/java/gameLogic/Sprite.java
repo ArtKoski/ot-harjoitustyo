@@ -206,15 +206,17 @@ public abstract class Sprite {
         return health / 400;
     }
 
-    public void damage(int x) {
+    public boolean damage(int x) {
         this.health -= x;
 
         hitColour();
         updateColour();
         if (this.health <= 0) {
-            die();
             setLiving(false);
+            die();
+            return true;
         }
+        return false;
     }
 
     public void setLiving(boolean state) {

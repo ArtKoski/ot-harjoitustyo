@@ -27,5 +27,14 @@ public class Hero extends Sprite {
 
         super(new Polygon(-5, -5, 10, 0, -5, 5), x, y);
     }
+    
+    @Override
+      public void die() {        //PIENI ANIMAATIO??
+        /*
+        for (int i = 1; i <= 10; i++) {
+            this.spritePolygon.setOpacity(spritePolygon.getOpacity() - 0.1);
+        }*/
+
+    }
 
 }

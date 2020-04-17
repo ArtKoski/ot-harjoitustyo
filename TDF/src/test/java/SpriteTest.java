@@ -10,10 +10,10 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
-import gameLogic.Hero;
+import gamelogic.Hero;
 import launch.Main;
-import gameLogic.Enemy;
-import gameLogic.Sprite;
+import gamelogic.Enemy;
+import gamelogic.Sprite;
 
 /**
  *

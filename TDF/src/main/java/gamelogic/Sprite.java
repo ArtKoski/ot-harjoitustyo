@@ -3,9 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package gameLogic;
+package gamelogic;
 
-import Ui.GUI;
+import ui.GUI;
 import com.sun.scenario.Settings;
 import java.awt.Image;
 import java.util.concurrent.TimeUnit;
@@ -32,6 +32,7 @@ public abstract class Sprite {
     public Point2D movement;
     public int health;
     public boolean alive;
+    int tmpr;
 
     public Sprite(int x, int y) {
         this.spritePolygon = new Polygon(-5, -5, 10, 0, -5, 5);
@@ -39,7 +40,7 @@ public abstract class Sprite {
         this.spritePolygon.setTranslateY(y);
         this.health = 400;
         alive = true;
-
+        this.spritePolygon.setFill(Color.GREEN);
         this.movement = new Point2D(0, 0);
     }
 
@@ -48,6 +49,7 @@ public abstract class Sprite {
         this.spritePolygon.setTranslateX(x);
         this.spritePolygon.setTranslateY(y);
         this.health = 400;
+        this.spritePolygon.setFill(Color.GREEN);
         alive = true;
 
         this.movement = new Point2D(0, 0);
@@ -56,7 +58,19 @@ public abstract class Sprite {
     public Polygon getPoly() {
         return spritePolygon;
     }
-
+   
+    public void immunityOn() {
+        tmpr = health;
+        health=10_000;
+        spritePolygon.setFill(Color.CORAL);
+        spritePolygon.setOpacity(80);
+    }
+    
+    public void immunityOff() {
+        health=tmpr;   
+        spritePolygon.setOpacity(100);
+        updateColour();
+    }
     void hitColour() {
         try {
             Paint tmpr = spritePolygon.getFill();
@@ -71,11 +85,11 @@ public abstract class Sprite {
     }
 
     void updateColour() {
-        if (this.health == 400) {
-            spritePolygon.setFill(Color.BLACK);
+        if (this.health >= 400) {
+            spritePolygon.setFill(Color.GREEN);
         }
         if (this.health < 400) {
-            spritePolygon.setFill(Color.GREY);
+            spritePolygon.setFill(Color.YELLOW);
         }
         if (this.health < 200) {
             spritePolygon.setFill(Color.RED);
@@ -86,12 +100,9 @@ public abstract class Sprite {
     }
 
     public void die() {        //PIENI ANIMAATIO??
-        /*for(int i = 1; i<20; i++) {
-            this.hahmo.setScaleX(1.25);
-            this.hahmo.setScaleY(1.25);
-        }*/
-        for (int i = 1; i <= 10; i++) {
-            this.spritePolygon.setOpacity(spritePolygon.getOpacity() - 0.1);
+        
+        for (int i = 1; i <= 100; i++) {
+            this.spritePolygon.setOpacity(spritePolygon.getOpacity() - 0.01);
         }
 
     }
@@ -202,7 +213,7 @@ public abstract class Sprite {
         return health;
     }
 
-    public double getHealthPercentage() {
+    public double getHealthPercentage() { // rikki
         return health / 400;
     }
 
@@ -227,4 +238,7 @@ public abstract class Sprite {
         return alive;
     }
 
+    public void patrol() {
+        
+    }
 }

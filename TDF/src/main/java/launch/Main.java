@@ -10,7 +10,7 @@ package launch;
  *
  * @author artkoski
  */
-import Ui.GUI;
+import ui.GUI;
 
 public class Main {
 

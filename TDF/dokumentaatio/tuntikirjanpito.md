@@ -13,6 +13,9 @@
 |4.4	|3	|Testien lisääminen, pakkauskaavion luonti, |
 |	|	|sekä repositiorion siistiminen 	|
 |16.4	|4	|uusia skenejä ja pieniä ominaisuuksia lisätty |
-|	|	|					|
+|17.4	|3	|Vihollisaaltojen toteutus, cooldown-	|				|
+|	|	|ominaisuus, koodin toiston vähentäminen |
+
+
 	 =
-	20
+	23

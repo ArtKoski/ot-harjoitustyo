@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package gameLogic;
+package gamelogic;
 
 import javafx.scene.shape.Polygon;
 
@@ -17,6 +17,7 @@ public class Enemy extends Sprite {
         super(new Polygon(-15, -15, 10, 0, -15, 15), x, y);
     }
 
+    @Override
     public void patrol() {
         super.toRight(0.2);
         super.slowDownShift();

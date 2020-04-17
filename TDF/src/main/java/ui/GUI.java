@@ -3,8 +3,14 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package Ui;
+package ui;
 
+import gamelogic.Bullet;
+import gamelogic.Enemy1;
+import gamelogic.Hero;
+import gamelogic.Enemy2;
+import gamelogic.Enemy;
+import gamelogic.Sprite;
 import java.awt.Canvas;
 import java.awt.TextField;
 import java.util.*;
@@ -17,7 +23,6 @@ import javafx.beans.binding.DoubleBinding;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.event.EventHandler;
-import javafx.geometry.Point2D;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.image.ImageView;
@@ -32,11 +37,6 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.Duration;
-import gameLogic.Bullet;
-import gameLogic.Enemy;
-import gameLogic.Hero;
-import gameLogic.Hero;
-import gameLogic.Sprite;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.event.EventType;
@@ -61,14 +61,16 @@ public class GUI extends Application {
     private Scene gameOverScene;
     private Scene gameOverSceneVictory;
     private Scene instructionsScene;
-    int circleForFive = 72;
     List<Bullet> ammo = new ArrayList<>();
     List<Bullet> enemyAmmo = new ArrayList<>();
-    List<Enemy> enemies = new ArrayList<>();
+    List<Sprite> enemies = new ArrayList<>();
     int round = 0;
     Hero hero;
     int score = 0;
-    //Enemy tutorialEnemy;
+    Random random;
+    long timer;
+    boolean cooldown = false;
+    long cdTimer = 0;
 
     public static void main(String[] args) {
         launch(args);
@@ -76,6 +78,8 @@ public class GUI extends Application {
 
     @Override
     public void start(Stage ikkuna) {
+        random = new Random();
+
         //ALKURUUTU
         BorderPane ruutu = new BorderPane();
         VBox ruudunSisalla = new VBox();
@@ -108,7 +112,7 @@ public class GUI extends Application {
         instructionsMenu.setPadding(new Insets(20, 20, 20, 20));
         instructionsMenu.setSpacing(10);
 
-        Label instructionsLabel = new Label("INSTRUCTIONS");  //TÄHÄN KIVEMPI TEXT
+        Label instructionsLabel = new Label("INSTRUCTIONS: \nArrow keys to move\nSHIFT+Arrow keys to slow down\nX to shoot\nE for immunity(cd)\nGoal: spaceship go brrt");  //TÄHÄN KIVEMPI TEXT
         Button startButton = new Button("START GAME");
         instructionsMenu.getChildren().addAll(instructionsLabel, startButton);
         instructionsMenu.setAlignment(Pos.CENTER);
@@ -143,8 +147,8 @@ public class GUI extends Application {
         menuV.setSpacing(10);
 
         Label gameOverLabelVictory = new Label("VICTORY");  //TÄHÄN KIVEMPI TEXT
-        Button tryAgainButtonV = new Button("TRY AGAIN");
-        Button hiScoresV = new Button("");
+        Button tryAgainButtonV = new Button("HISCORES");
+        Button hiScoresV = new Button("GO AGAIN");
         Button exitButtonV = new Button("EXIT");
         menuV.getChildren().addAll(gameOverLabelVictory, tryAgainButtonV, hiScoresV);
         menuV.setAlignment(Pos.CENTER);
@@ -155,12 +159,6 @@ public class GUI extends Application {
         Pane peliRuutu = new Pane();
         peliRuutu.setPrefSize(LEVEYS, KORKEUS);
 
-        Text roundATM = new Text();
-        roundATM.setText("Tutorial");
-        Text scoreText = new Text();
-        roundATM.setText(String.valueOf(score));
-        GridPane roundsPane = new GridPane();
-
         //ADD HERO
         hero = new Hero(150, 100);
         peliRuutu.getChildren().add(hero.getPoly());
@@ -168,9 +166,15 @@ public class GUI extends Application {
         //ADD TUT ENEMY
         tut(peliRuutu);
 
-        //Tut Text
-        roundsPane.getChildren().add(roundATM);
-        roundsPane.getChildren().add(scoreText);
+        //ROUND/SCORE TEXT
+        Text roundATM = new Text();
+        Text scoreText = new Text();
+        roundATM.setText("Tutorial");
+        scoreText.setText("Points: " + score);
+        roundATM.setText(String.valueOf(score));
+        BorderPane roundsPane = new BorderPane();
+        roundsPane.setLeft(roundATM); //FIX THIS
+        roundsPane.setRight(scoreText);
         peliRuutu.getChildren().add(roundsPane);
 
         peliNakyma = new Scene(peliRuutu);
@@ -209,26 +213,64 @@ public class GUI extends Application {
                 if (painetutNapit.getOrDefault(KeyCode.UP, false)) {
                     hero.accelerate();
                 }
+                
+                //IMMUNITY COOLDOWN && TIMER
+                if (painetutNapit.getOrDefault(KeyCode.E, false) && cooldown==false) {
+                    cdTimer=0;
+                    cooldown=true;
+                    hero.immunityOn();
+                    timer = nykyhetki;
+                }
+                if(nykyhetki>(timer+1050000000)) {
+                    hero.immunityOff();
+                }
+                if(cooldown==true && cdTimer>4000) {
+                    cdTimer=0;
+                    System.out.println("valmis"); // MAYBE AN ICON HERE OR JUST TEXT ON SCREEN
+                    
+                    cooldown=false;
+                } else{
+                    cdTimer++;
+                }
+                
+                //HERO SHOOT
+                if (painetutNapit.getOrDefault(KeyCode.X, false) && ammo.size() < 3) {
+                    Bullet shot = new Bullet((int) hero.getPoly().getTranslateX(), (int) hero.getPoly().getTranslateY());
 
+                    shot.getPoly().setRotate(hero.spritePolygon.getRotate());
+                    ammo.add(shot);
+
+                    shot.accelerate();
+                    shot.setMovement(shot.getMovement().normalize().multiply(1.5));
+
+                    peliRuutu.getChildren().add(shot.getPoly());
+                }
+
+                if (painetutNapit.getOrDefault(KeyCode.SHIFT, false && ammo.size() < 1)) {
+                    hero.slowDownShift();
+                }
+
+                //HERO BASIC MOVEMENT
                 hero.move();
                 hero.slowDown();
 
                 //ROUNDS
-                if (enemies.isEmpty()) {
+                if (enemies.isEmpty() && ikkuna.getScene()==peliNakyma) {
                     round++;
+
                     roundATM.setText("Round " + round);
 
                     if (round == 1) {
                         System.out.println("r: " + 1);
-                        tut(peliRuutu);
+                        round1(peliRuutu);
                     }
                     if (round == 2) {
                         System.out.println("r: " + 2);
-                        tut(peliRuutu);
+                        round2(peliRuutu);
                     }
                     if (round == 3) {
-                        System.out.println("cleared!");
-                        stop();
+                        gameOverLabelVictory.setText("VICTORY! \nScore: " + score + "\nRound: " + round);
+                    
                         ikkuna.setScene(gameOverSceneVictory);
                     }
 
@@ -242,48 +284,38 @@ public class GUI extends Application {
                     }
                 });
 
-                //ENEMY SHOOT, Fix this :)
-                if (nykyhetki % 500 == 0) {
+                //ENEMY SHOOT
+                if (nykyhetki % 1500 == 0) {
                     for (Sprite enemy : enemies) {
                         if (enemy.getLiving()) {
+                            int spray = 10 - random.nextInt(20);
                             Bullet shot = new Bullet((int) enemy.getPoly().getTranslateX(), (int) enemy.getPoly().getTranslateY());
-                            shot.getPoly().setRotate(shot.spritePolygon.getRotate());
+
+                            // System.out.println("angle " + Math.toDegrees(Math.atan2(hero.getPoly().getTranslateY() - shot.getPoly().getTranslateY(),  hero.getPoly().getTranslateX() - shot.getPoly().getTranslateX())));
+                            shot.getPoly().setRotate(Math.toDegrees(Math.atan2(hero.getPoly().getTranslateY() - shot.getPoly().getTranslateY(), hero.getPoly().getTranslateX() - shot.getPoly().getTranslateX())) + spray);
                             enemyAmmo.add(shot);
 
                             shot.accelerate();
-                            shot.setMovement(shot.getMovement().normalize().multiply(1.5));
+                            shot.setMovement(shot.getMovement().normalize().multiply(0.2));
 
                             peliRuutu.getChildren().add(shot.getPoly());
+                        }
+                        if (enemy.getLiving() && enemy.getClass() == Enemy2.class) {  //CIRCLE ATTACK
+                            for (int i = 0; i < 10; i++) {
+                                Bullet shot = new Bullet((int) enemy.getPoly().getTranslateX(), (int) enemy.getPoly().getTranslateY());
+                                shot.getPoly().setRotate(enemy.getPoly().getRotate() + 36 * i);
+                                enemyAmmo.add(shot);
+
+                                shot.accelerate();
+                                shot.setMovement(shot.getMovement().normalize().multiply(0.2));
+
+                                peliRuutu.getChildren().add(shot.getPoly());
+                            }
                         }
                     }
                 }
 
-                if (painetutNapit.getOrDefault(KeyCode.SPACE, false) && ammo.size() < 3) {
-                    Bullet shot = new Bullet((int) hero.getPoly().getTranslateX(), (int) hero.getPoly().getTranslateY());
-
-                    shot.getPoly().setRotate(hero.spritePolygon.getRotate());
-                    ammo.add(shot);
-
-                    shot.accelerate();
-                    shot.setMovement(shot.getMovement().normalize().multiply(1.5));
-
-                    peliRuutu.getChildren().add(shot.getPoly());
-                }
-                if (painetutNapit.getOrDefault(KeyCode.SHIFT, false && ammo.size() < 1)) {
-                    hero.slowDownShift();
-                }
-                /*
-for(int i = 0; i<5; i++){
-                    Bullet shot = new Bullet((int) hero.getPoly().getTranslateX(), (int) hero.getPoly().getTranslateY());
-                    shot.getPoly().setRotate(hero.getPoly().getRotate()+circleForFive*i);
-                    ammo.add(shot);
-
-                    shot.accelerate();
-                    shot.setVelocity(shot.getAcceleration().normalize().multiply(1.5));
-
-                    peliRuutu.getChildren().add(shot.getPoly());
-                    }
-                 */
+                //AMMO BASIC MOVEMENT
                 ammo.forEach(ammus -> ammus.move());
                 enemyAmmo.forEach(ammus -> ammus.move());
 
@@ -292,12 +324,12 @@ for(int i = 0; i<5; i++){
                     enemies.forEach(enemy -> {
                         if (shot.intersect(enemy)) {
                             shot.setLiving(false);
-
+                            animateUsingTimeline(enemy.spritePolygon, 1.0, 1.4);
                             if (enemy.damage(40)) {
                                 score += 10;
-
+                                scoreText.setText("Points: " + score);
+                                peliRuutu.getChildren().remove(enemy.spritePolygon);
                             }
-                            animateUsingTimeline(enemy.spritePolygon, 1.0, 1.4);
 
                         }
 
@@ -314,7 +346,8 @@ for(int i = 0; i<5; i++){
                 //BULLET HITS HERO
                 enemyAmmo.forEach(shot -> {
                     if (shot.intersect(hero)) {
-                        hero.damage(40);
+                        shot.damage(1000);
+                        hero.damage(5);
                     }
                 });
 
@@ -339,20 +372,30 @@ for(int i = 0; i<5; i++){
                         .filter(enemy -> !enemy.getLiving())
                         .collect(Collectors.toList()));
 
+                //HERO DEAD
                 if (!hero.alive) {
                     animateUsingTimeline(hero.getPoly(), 1.0, 1.4);
-                    //ikkuna.setScene(gameOverScene);
+                    gameOverLabel.setText("GAME OVER \nScore: " + score + "\nRound: " + round);
+                    ikkuna.setScene(gameOverScene);
+                    peliRuutu.getChildren().remove(hero.spritePolygon);
 
-                    // TOO FAST ATM
+                    // TOO FAST ATM, FIX
                 }
             }
         }.start();
 
         //gameOverButton
-        tryAgainButton.setOnAction(click -> {
-            round = 0;
-            hero = new Hero(150, 100);
-            peliRuutu.getChildren().add(hero.getPoly());
+        tryAgainButton.setOnAction(click -> {  // MAKE METHOD FOR 'RESET', BULLETS NEED TO BE CLEARED AS WELL
+            resetRound(peliRuutu);
+            roundATM.setText("Tutorial  ");
+            scoreText.setText("Points: " + score);
+            ikkuna.setScene(peliNakyma);
+        });
+
+        tryAgainButtonV.setOnAction(click -> {
+            resetRound(peliRuutu);
+            roundATM.setText("Tutorial");
+            scoreText.setText("Points: " + score);
             ikkuna.setScene(peliNakyma);
         });
 
@@ -362,6 +405,30 @@ for(int i = 0; i<5; i++){
 
     }
 
+    //RESET ROUND, = CLEAR OLD ENTITIES, ADD NEW HERO
+    void resetRound(Pane peliRuutu) {
+        round = 0;
+        score = 0;
+        peliRuutu.getChildren().remove(hero.getPoly());
+        for (Sprite e : enemies) {
+            e.alive = false;
+            peliRuutu.getChildren().remove(e.getPoly());
+        }
+        enemies.clear();
+        for (Sprite e : enemyAmmo) {
+            e.alive = false;
+            peliRuutu.getChildren().remove(e.getPoly());
+        }
+        enemyAmmo.clear();
+        hero = new Hero(150, 100);
+        hero.slowDown();
+        peliRuutu.getChildren().add(hero.getPoly());
+
+        tut(peliRuutu);
+
+    }
+// ROUNDS OF ENEMIES
+
     void tut(Pane pane) {
 
         Enemy tutorialEnemy = new Enemy(300, 150);
@@ -370,6 +437,20 @@ for(int i = 0; i<5; i++){
 
     }
 
+    void round1(Pane pane) {
+        for (int i = 0; i < 2; i++) {
+            enemies.add(new Enemy1(300 / (i + 1), 150));
+            pane.getChildren().add(enemies.get(i).spritePolygon);
+        }
+    }
+
+    void round2(Pane pane) {
+        enemies.add(new Enemy2(300, 150));
+        pane.getChildren().add(enemies.get(0).spritePolygon);
+
+    }
+
+    //HIT ANIMATION
     private boolean animateUsingTimeline(Polygon thing, double value1, double value2) {
         DoubleProperty scale = new SimpleDoubleProperty(1);
         thing.scaleXProperty().bind(scale);

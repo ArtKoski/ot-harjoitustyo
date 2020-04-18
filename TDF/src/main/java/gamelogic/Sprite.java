@@ -54,6 +54,16 @@ public abstract class Sprite {
 
         this.movement = new Point2D(0, 0);
     }
+    public Sprite(Polygon poly, int x, int y, int hp) {
+        this.spritePolygon = poly;
+        this.spritePolygon.setTranslateX(x);
+        this.spritePolygon.setTranslateY(y);
+        this.health = hp;
+        this.spritePolygon.setFill(Color.GREEN);
+        alive = true;
+
+        this.movement = new Point2D(0, 0);
+    }
 
     public Polygon getPoly() {
         return spritePolygon;

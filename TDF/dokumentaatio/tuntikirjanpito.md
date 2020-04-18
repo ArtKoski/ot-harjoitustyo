@@ -15,7 +15,7 @@
 |16.4	|4	|uusia skenejä ja pieniä ominaisuuksia lisätty |
 |17.4	|3	|Vihollisaaltojen toteutus, cooldown-	|				|
 |	|	|ominaisuus, koodin toiston vähentäminen |
-
+|18.4	|2	|testejä lisää, bugiFixaus ja firstRelease|
 
 	 =
-	23
+	25

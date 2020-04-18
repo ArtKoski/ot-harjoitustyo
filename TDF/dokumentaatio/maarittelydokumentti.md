@@ -6,7 +6,7 @@ ja kerätä pisteitä.
 
 ## *Käyttäjät*
 1. Peruskäyttäjä
-(2.) Admin/GodMode? Ei prioriteetti.
+(2.) Admin/GodMode? Ei prioriteetti. [Immunity-ominaisuus melkein valmis]
 
 ## *Käyttöliittymä*
 1a) Sisäänkirjautuminen käyttäjälle, jonka jälkeen pääsee peliin\
@@ -23,13 +23,13 @@ TAI
 -Pelin päätyttyä kysytään nimeä, joka voidaan sitten tallentaa halutulla tavalla
 
  _Itse peli_\
--Käyttäjän kontrolloima hahmo\
--Hahmo "kuolee" jos osuu muihin objekteihin\
--Toiminnallisuus tuhota muita objekteja, josta saa pisteitä
+-Käyttäjän kontrolloima hahmo[done]\
+-Hahmo "kuolee" jos osuu muihin objekteihin[done]\
+-Toiminnallisuus tuhota muita objekteja, josta saa pisteitä[done]\
 
 ## *Jatkokehitysideoita*
 -Hiscoret\
 -Hahmon tavat tuhota objekteja (pyssy vai miekka)\
--Vihollisobjektien progressiivinen vaikeutuminen\
+-Vihollisobjektien progressiivinen vaikeutuminen[toiminnallisuus vihollisaaltoihin tehty]\
 -Boss-vihollinen\
--Ampuu hahmoa kohti??
+-viholliset ampuu hahmoa kohti??[done]

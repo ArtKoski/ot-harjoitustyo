@@ -215,7 +215,7 @@ public class GUI extends Application {
                 }
                 
                 //IMMUNITY COOLDOWN && TIMER
-                if (painetutNapit.getOrDefault(KeyCode.E, false) && cooldown==false) {
+                /*if (painetutNapit.getOrDefault(KeyCode.E, false) && cooldown==false) {
                     cdTimer=0;
                     cooldown=true;
                     hero.immunityOn();
@@ -232,7 +232,7 @@ public class GUI extends Application {
                 } else{
                     cdTimer++;
                 }
-                
+                */
                 //HERO SHOOT
                 if (painetutNapit.getOrDefault(KeyCode.X, false) && ammo.size() < 3) {
                     Bullet shot = new Bullet((int) hero.getPoly().getTranslateX(), (int) hero.getPoly().getTranslateY());
@@ -339,7 +339,7 @@ public class GUI extends Application {
                 enemies.forEach(enemy -> {
                     if (hero.intersect(enemy)) {
                         hero.damage(100);
-                        animateUsingTimeline(hero.spritePolygon, 1.0, 0.8);
+                        animateUsingTimeline(hero.spritePolygon, 1.0, 0.8); //Doesnt work atm
                     }
                 });
 
@@ -374,6 +374,7 @@ public class GUI extends Application {
 
                 //HERO DEAD
                 if (!hero.alive) {
+                    painetutNapit.clear();
                     animateUsingTimeline(hero.getPoly(), 1.0, 1.4);
                     gameOverLabel.setText("GAME OVER \nScore: " + score + "\nRound: " + round);
                     ikkuna.setScene(gameOverScene);
@@ -406,7 +407,7 @@ public class GUI extends Application {
     }
 
     //RESET ROUND, = CLEAR OLD ENTITIES, ADD NEW HERO
-    void resetRound(Pane peliRuutu) {
+    void resetRound(Pane peliRuutu) {    //NEED TO FIX: AFTER RESET HERO FLIPS
         round = 0;
         score = 0;
         peliRuutu.getChildren().remove(hero.getPoly());
@@ -421,7 +422,6 @@ public class GUI extends Application {
         }
         enemyAmmo.clear();
         hero = new Hero(150, 100);
-        hero.slowDown();
         peliRuutu.getChildren().add(hero.getPoly());
 
         tut(peliRuutu);

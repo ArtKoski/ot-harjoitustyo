@@ -31,13 +31,11 @@ public class Hero extends Sprite {
     //Image image;
     //ImageView imageView;
     public Hero(int x, int y) {
-
-        super(new Polygon(-5, -5, 10, 0, -5, 5), x, y);
-        super.health=600;
+        super(new Polygon(-5, -5, 10, 0, -5, 5), x, y, 800);
     }
-    
+
     @Override
-      public void die() {        //PIENI ANIMAATIO??
+    public void die() {        //PIENI ANIMAATIO??
         /*
         for (int i = 1; i <= 10; i++) {
             this.spritePolygon.setOpacity(spritePolygon.getOpacity() - 0.1);
@@ -53,6 +51,20 @@ public class Hero extends Sprite {
         beat.setAutoReverse(true);
         beat.setCycleCount(2);
         beat.play();
-    */}
+         */
+    }
 
+    @Override
+    public boolean damage(int x) {
+        this.health -= x;
+
+        hitColour();
+        updateColour();
+        if (this.health <= 0) {
+            setLiving(false);
+            die();
+            return true;
+        }
+        return false;
+    }
 }

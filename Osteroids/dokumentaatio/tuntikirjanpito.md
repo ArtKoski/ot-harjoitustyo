@@ -16,6 +16,7 @@
 |17.4	|3	|Vihollisaaltojen toteutus, cooldown-	|				|
 |	|	|ominaisuus, koodin toiston vähentäminen |
 |18.4	|2	|testejä lisää, bugiFixaus ja firstRelease|
-
+|19.4	|2	|jar-tiedoston luonti, asioiden uudelleen-
+|	|	|nimeäminen, kaavioiden päivittely	|
 	 =
-	25
+	27

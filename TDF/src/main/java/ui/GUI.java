@@ -5,14 +5,7 @@
  */
 package ui;
 
-import gamelogic.Bullet;
-import gamelogic.Enemy1;
-import gamelogic.Hero;
-import gamelogic.Enemy2;
-import gamelogic.Enemy;
-import gamelogic.Sprite;
-import java.awt.Canvas;
-import java.awt.TextField;
+import gamelogic.*;
 import java.util.*;
 import java.util.stream.Collectors;
 import javafx.animation.AnimationTimer;
@@ -112,7 +105,7 @@ public class GUI extends Application {
         instructionsMenu.setPadding(new Insets(20, 20, 20, 20));
         instructionsMenu.setSpacing(10);
 
-        Label instructionsLabel = new Label("INSTRUCTIONS: \nArrow keys to move\nSHIFT+Arrow keys to slow down\nX to shoot\nE for immunity(cd)\nGoal: spaceship go brrt");  //TÄHÄN KIVEMPI TEXT
+        Label instructionsLabel = new Label("INSTRUCTIONS: \nArrow keys to move\nSHIFT+Arrow keys to slow down\nX to shoot\nE for immunity(disabled atm)\nGoal: spaceship go brrt");  //TÄHÄN KIVEMPI TEXT
         Button startButton = new Button("START GAME");
         instructionsMenu.getChildren().addAll(instructionsLabel, startButton);
         instructionsMenu.setAlignment(Pos.CENTER);
@@ -213,8 +206,8 @@ public class GUI extends Application {
                 if (painetutNapit.getOrDefault(KeyCode.UP, false)) {
                     hero.accelerate();
                 }
-                
-                //IMMUNITY COOLDOWN && TIMER
+
+                //IMMUNITY COOLDOWN && TIMER, little broken ATM
                 /*if (painetutNapit.getOrDefault(KeyCode.E, false) && cooldown==false) {
                     cdTimer=0;
                     cooldown=true;
@@ -232,7 +225,7 @@ public class GUI extends Application {
                 } else{
                     cdTimer++;
                 }
-                */
+                 */
                 //HERO SHOOT
                 if (painetutNapit.getOrDefault(KeyCode.X, false) && ammo.size() < 3) {
                     Bullet shot = new Bullet((int) hero.getPoly().getTranslateX(), (int) hero.getPoly().getTranslateY());
@@ -255,7 +248,7 @@ public class GUI extends Application {
                 hero.slowDown();
 
                 //ROUNDS
-                if (enemies.isEmpty() && ikkuna.getScene()==peliNakyma) {
+                if (enemies.isEmpty() && ikkuna.getScene() == peliNakyma) {
                     round++;
 
                     roundATM.setText("Round " + round);
@@ -270,7 +263,7 @@ public class GUI extends Application {
                     }
                     if (round == 3) {
                         gameOverLabelVictory.setText("VICTORY! \nScore: " + score + "\nRound: " + round);
-                    
+                        painetutNapit.clear();
                         ikkuna.setScene(gameOverSceneVictory);
                     }
 

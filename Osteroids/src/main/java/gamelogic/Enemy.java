@@ -14,7 +14,7 @@ import javafx.scene.shape.Polygon;
 public class Enemy extends Sprite {
 
     public Enemy(int x, int y) {
-        super(new Polygon(-15, -15, 10, 0, -15, 15), x, y);
+        super(new Polygon(-15, -15, 10, 0, -15, 15), x, y, 500);
     }
 
     @Override

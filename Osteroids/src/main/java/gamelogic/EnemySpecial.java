@@ -11,15 +11,15 @@ import javafx.scene.shape.Polygon;
  *
  * @author artkoski
  */
-public class Enemy2 extends Sprite {
+public class EnemySpecial extends Sprite {
 
-    public Enemy2(int x, int y) {
-        super(new Polygon(-20, -10, 10, 0, -20, 10), x, y, 2000);
+    public EnemySpecial(int x, int y) {
+        super(new Polygon(-50, -50, 50, 50, -50, 50), x, y, 5000);
     }
 
     @Override
     public void patrol() {
-        super.toLeft();
+        super.toLeft(0.0005);
     }
 
 }

@@ -12,17 +12,11 @@ import javafx.animation.AnimationTimer;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Application;
-import javafx.beans.binding.DoubleBinding;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
-import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
-import javafx.scene.layout.FlowPane;
-import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Polygon;
@@ -30,15 +24,10 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.Duration;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javafx.event.EventType;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 
 /**
@@ -64,6 +53,7 @@ public class GUI extends Application {
     long timer;
     boolean cooldown = false;
     long cdTimer = 0;
+    boolean cleared;
 
     public static void main(String[] args) {
         launch(args);
@@ -83,6 +73,7 @@ public class GUI extends Application {
 
         Button nappi = new Button("START");
         Button instructionsButton = new Button("HOW TO PLAY");
+        Button Configuration = new Button("CONFIG");                  //asd
         ruudunSisalla.getChildren().add(nappi);
         ruudunSisalla.getChildren().add(instructionsButton);
         ruudunSisalla.setAlignment(Pos.CENTER);
@@ -116,6 +107,11 @@ public class GUI extends Application {
             ikkuna.setScene(peliNakyma);
         });
 
+        //ConfigScene, change enemy damage ETC !!
+        
+        
+        
+        
         //gameOverScene
         BorderPane gameOverLayout = new BorderPane();
         gameOverLayout.setPrefSize(LEVEYS, KORKEUS);
@@ -140,10 +136,10 @@ public class GUI extends Application {
         menuV.setSpacing(10);
 
         Label gameOverLabelVictory = new Label("VICTORY");  //TÄHÄN KIVEMPI TEXT
-        Button tryAgainButtonV = new Button("HISCORES");
-        Button hiScoresV = new Button("GO AGAIN");
+        Button tryAgainButtonV = new Button("TRY AGAIN");
+        Button hiScoresV = new Button("HISCORES");
         Button exitButtonV = new Button("EXIT");
-        menuV.getChildren().addAll(gameOverLabelVictory, tryAgainButtonV, hiScoresV);
+        menuV.getChildren().addAll(gameOverLabelVictory, hiScoresV, tryAgainButtonV);
         menuV.setAlignment(Pos.CENTER);
         gameOverVictory.setCenter(menuV);
         gameOverSceneVictory = new Scene(gameOverVictory);
@@ -227,7 +223,7 @@ public class GUI extends Application {
                 }
                  */
                 //HERO SHOOT
-                if (painetutNapit.getOrDefault(KeyCode.X, false) && ammo.size() < 3) {
+                if (painetutNapit.getOrDefault(KeyCode.X, false) && ammo.size() < 2) {
                     Bullet shot = new Bullet((int) hero.getPoly().getTranslateX(), (int) hero.getPoly().getTranslateY());
 
                     shot.getPoly().setRotate(hero.spritePolygon.getRotate());
@@ -249,8 +245,12 @@ public class GUI extends Application {
 
                 //ROUNDS
                 if (enemies.isEmpty() && ikkuna.getScene() == peliNakyma) {
+                    cleared = true;
                     round++;
+                }
 
+                if (cleared) {
+                    cleared = false;
                     roundATM.setText("Round " + round);
 
                     if (round == 1) {
@@ -262,11 +262,16 @@ public class GUI extends Application {
                         round2(peliRuutu);
                     }
                     if (round == 3) {
+
+                        System.out.println("r: " + 3 + " _final wave_");
+                        round3Boss(peliRuutu);
+                    }
+                    if (round == 4) {
                         gameOverLabelVictory.setText("VICTORY! \nScore: " + score + "\nRound: " + round);
+                        resetRound(peliRuutu);
                         painetutNapit.clear();
                         ikkuna.setScene(gameOverSceneVictory);
                     }
-
                 }
 
                 //ENEMY PATROL
@@ -277,10 +282,23 @@ public class GUI extends Application {
                     }
                 });
 
+                //BOSS THINGIES
+                if (enemies.get(0).getClass() == EnemySpecial.class) {
+                    if (nykyhetki % 3000 == 0) {
+                        round3(peliRuutu, 40, 0, 2, 2);
+                        round3(peliRuutu, 40, 180, 598, 2);
+                    }
+                    if (nykyhetki % 5000 == 0) {
+                        round3Vertical(peliRuutu, 40, 270, 2, 398);
+                        round3Vertical(peliRuutu, 40, 90, 2, 2);
+
+                    }
+                }
+
                 //ENEMY SHOOT
                 if (nykyhetki % 1500 == 0) {
                     for (Sprite enemy : enemies) {
-                        if (enemy.getLiving()) {
+                        if (enemy.getLiving() && enemy.getClass() == Enemy1.class) {
                             int spray = 10 - random.nextInt(20);
                             Bullet shot = new Bullet((int) enemy.getPoly().getTranslateX(), (int) enemy.getPoly().getTranslateY());
 
@@ -379,7 +397,7 @@ public class GUI extends Application {
         }.start();
 
         //gameOverButton
-        tryAgainButton.setOnAction(click -> {  // MAKE METHOD FOR 'RESET', BULLETS NEED TO BE CLEARED AS WELL
+        tryAgainButton.setOnAction(click -> {
             resetRound(peliRuutu);
             roundATM.setText("Tutorial  ");
             scoreText.setText("Points: " + score);
@@ -392,6 +410,10 @@ public class GUI extends Application {
             scoreText.setText("Points: " + score);
             ikkuna.setScene(peliNakyma);
         });
+        
+        exitButton.setOnAction(click -> {
+            ikkuna.close();
+        });
 
         //---
         ikkuna.setScene(alkuNakyma);
@@ -399,8 +421,8 @@ public class GUI extends Application {
 
     }
 
-    //RESET ROUND, = CLEAR OLD ENTITIES, ADD NEW HERO
-    void resetRound(Pane peliRuutu) {    //NEED TO FIX: AFTER RESET HERO FLIPS
+    // RESET ROUND, = CLEAR OLD ENTITIES, ADD NEW HERO
+    void resetRound(Pane peliRuutu) {
         round = 0;
         score = 0;
         peliRuutu.getChildren().remove(hero.getPoly());
@@ -427,19 +449,59 @@ public class GUI extends Application {
         Enemy tutorialEnemy = new Enemy(300, 150);
         pane.getChildren().add(tutorialEnemy.getPoly());
         enemies.add(tutorialEnemy);
-
+        cleared = false;
     }
 
     void round1(Pane pane) {
+
         for (int i = 0; i < 2; i++) {
             enemies.add(new Enemy1(300 / (i + 1), 150));
             pane.getChildren().add(enemies.get(i).spritePolygon);
         }
+        cleared = false;
     }
 
     void round2(Pane pane) {
         enemies.add(new Enemy2(300, 150));
         pane.getChildren().add(enemies.get(0).spritePolygon);
+        cleared = false;
+    }
+
+    void round3Boss(Pane pane) {
+        enemies.add(new EnemySpecial(300, 2));
+        enemies.get(0).getPoly().setRotate(-45);
+        pane.getChildren().add(enemies.get(0).spritePolygon);
+    }
+
+    void round3(Pane pane, int value, int rotate, int startX, int startY) {
+        for (int i = startY; i < 400; i++) {
+            Bullet shot = new Bullet((int) startX, (int) i);
+            shot.getPoly().setRotate(rotate);
+            enemyAmmo.add(shot);
+
+            shot.accelerate();
+            shot.setMovement(shot.getMovement().normalize().multiply(0.1));
+
+            pane.getChildren().add(shot.getPoly());
+            i += value;
+        }
+        cleared = false;
+
+    }
+
+    void round3Vertical(Pane pane, int value, int rotate, int startX, int startY) {
+        for (int i = startX; i < 400; i++) {
+            Bullet shot = new Bullet((int) i, (int) startY);
+            shot.getPoly().setRotate(rotate);
+            enemyAmmo.add(shot);
+
+            shot.accelerate();
+            shot.setMovement(shot.getMovement().normalize().multiply(0.1));
+
+            pane.getChildren().add(shot.getPoly());
+            i += value;
+        }
+        cleared = false;
 
     }
 
@@ -459,7 +521,7 @@ public class GUI extends Application {
         return true;
     }
 
-    private boolean animateUsingTimeline2(Polygon thing, double value1, double value2) {
+    private boolean animateUsingTimeline2(Polygon thing, double value1, double value2) { //not used atm
         DoubleProperty scale = new SimpleDoubleProperty(1);
         thing.scaleXProperty().bind(scale);
         thing.scaleYProperty().bind(scale);
@@ -476,26 +538,4 @@ public class GUI extends Application {
 
         return true;
     }
-    /*
-    private void moveCircleOnKeyPress(Scene scene, Hahmo hahmo) {
-        scene.setOnKeyPressed(new EventHandler<KeyEvent>() {
-            @Override
-            public void handle(KeyEvent event) {
-                switch (event.getCode()) {
-                    case UP:
-                        hahmo.liike = hahmo.liike.add(hahmo.getLiike().getX(), hahmo.liike.getY() - 0.5);
-                        break;
-                    case RIGHT:
-                        hahmo.liike = hahmo.liike.add(hahmo.liike.getX() + 0.5, hahmo.getLiike().getY());
-                        break;
-                    case DOWN:
-                        hahmo.liike = hahmo.liike.add(hahmo.getLiike().getX(), hahmo.liike.getY() + 0.5);
-                        break;
-                    case LEFT:
-                        hahmo.liike = hahmo.liike.add(hahmo.liike.getX() - 0.5, hahmo.getLiike().getY());
-                        break;
-                }
-            }
-        });
-    }*/
 }

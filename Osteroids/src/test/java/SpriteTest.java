@@ -11,6 +11,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import gamelogic.*;
+import javafx.geometry.Point2D;
 import launch.Main;
 
 /**
@@ -119,7 +120,6 @@ public class SpriteTest {
     @Test
     public void accelerateBack() {
         
-        //System.out.println(sprite4.getMovement().getX()+", "+ sprite4.getMovement().getY());
         
         sprite4.accelerateBack();
         sprite4.move();
@@ -128,6 +128,32 @@ public class SpriteTest {
         assertTrue(sprite4.getMovement().getX()<0 && sprite4.getMovement().getY()<0);
        
         
+    }
+    
+    @Test
+    public void immunityWorksProper() {
+        int tmpr = sprite.getHealth();
+        sprite.immunityOn();
+        sprite.damage(3000);
+        sprite.immunityOff();
+        assertEquals(tmpr, sprite.getHealth());
+        assertTrue(sprite.getLiving());
+    }
+    
+    @Test
+    public void spriteTriesToGoOB() {
+        int rotateKerroin = 1;
+        for(int i = 0; i<10000;i++){
+        sprite.move();
+        sprite.accelerate();
+        if(i%2500==0) {
+            sprite.setMovement(new Point2D(0,0));
+            sprite.getPoly().setRotate(90*rotateKerroin);
+            rotateKerroin++;
+        }
+        assertTrue(sprite.spritePolygon.getTranslateX()<=598 && sprite.spritePolygon.getTranslateX()>=2); //check that the mfer is inbounds
+        assertTrue(sprite.spritePolygon.getTranslateY()<=398 && sprite.spritePolygon.getTranslateY()>=2);
+        }
     }
     // TODO add test methods here.
     // The methods must be annotated with annotation @Test. For example:

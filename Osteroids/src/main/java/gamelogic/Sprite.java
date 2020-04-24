@@ -6,15 +6,11 @@
 package gamelogic;
 
 import ui.GUI;
-import com.sun.scenario.Settings;
-import java.awt.Image;
-import java.util.concurrent.TimeUnit;
 import javafx.geometry.Point2D;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Polygon;
 import javafx.scene.shape.Shape;
-import javax.swing.text.html.ImageView;
 
 /**
  *
@@ -34,26 +30,6 @@ public abstract class Sprite {
     public boolean alive;
     int tmpr;
 
-    public Sprite(int x, int y) {
-        this.spritePolygon = new Polygon(-5, -5, 10, 0, -5, 5);
-        this.spritePolygon.setTranslateX(x);
-        this.spritePolygon.setTranslateY(y);
-        this.health = 400;
-        alive = true;
-        this.spritePolygon.setFill(Color.GREEN);
-        this.movement = new Point2D(0, 0);
-    }
-
-    public Sprite(Polygon poly, int x, int y) {
-        this.spritePolygon = poly;
-        this.spritePolygon.setTranslateX(x);
-        this.spritePolygon.setTranslateY(y);
-        this.health = 400;
-        this.spritePolygon.setFill(Color.GREEN);
-        alive = true;
-
-        this.movement = new Point2D(0, 0);
-    }
     public Sprite(Polygon poly, int x, int y, int hp) {
         this.spritePolygon = poly;
         this.spritePolygon.setTranslateX(x);
@@ -68,19 +44,27 @@ public abstract class Sprite {
     public Polygon getPoly() {
         return spritePolygon;
     }
-   
+
+    /**
+     * grants the sprite immunity to damage
+     * <p>
+     * health is temporarily set to a high amount and returns to normal whenever
+     * the counterpart method immunityOff() is called.
+     * </p>
+     */
     public void immunityOn() {
         tmpr = health;
-        health=10_000;
+        health = 10_000;
         spritePolygon.setFill(Color.CORAL);
         spritePolygon.setOpacity(80);
     }
-    
+
     public void immunityOff() {
-        health=tmpr;   
+        health = tmpr;
         spritePolygon.setOpacity(100);
         updateColour();
     }
+
     void hitColour() {
         try {
             Paint tmpr = spritePolygon.getFill();
@@ -110,13 +94,19 @@ public abstract class Sprite {
     }
 
     public void die() {        //PIENI ANIMAATIO??
-        
+
         for (int i = 1; i <= 100; i++) {
             this.spritePolygon.setOpacity(spritePolygon.getOpacity() - 0.01);
         }
 
     }
 
+    /**
+     * when sprites collide with each other
+     *
+     * @param other - another sprite
+     * @return true if collision detected with other sprite, otherwise false
+     */
     public boolean intersect(Sprite other) {
         Shape tormaysalue = Shape.intersect(this.spritePolygon, other.getPoly());
         return tormaysalue.getBoundsInLocal().getWidth() != -1;
@@ -145,19 +135,6 @@ public abstract class Sprite {
 
     }
 
-    public void accelerate() {
-
-        double muutosX = Math.cos(Math.toRadians(this.spritePolygon.getRotate()));
-        double muutosY = Math.sin(Math.toRadians(this.spritePolygon.getRotate()));
-
-        muutosX *= 0.0005;
-        muutosY *= 0.0005;
-
-        if (!(muutosX > 0.05 || muutosY > 0.05)) {
-            this.movement = this.movement.add(muutosX, muutosY);
-        }
-    }
-
     public void accelerateBack() {
         double muutosX = Math.cos(Math.toRadians(this.spritePolygon.getRotate()) - Math.PI);
         double muutosY = Math.sin(Math.toRadians(this.spritePolygon.getRotate()) - Math.PI);
@@ -170,6 +147,16 @@ public abstract class Sprite {
         }
     }
 
+    /**
+     * accelerate sprites movement
+     * <p>
+     * calculates the sprite's 'front' and adds movement towards that direction.
+     * Amount of acceleration is modified by parameters x and y.
+     * </p>
+     *
+     * @param x - acceleration amount relative to x (normal 0.0005)
+     * @param y - acceleration amount relative to y (normal 0.0005)
+     */
     public void accelerate(double x, double y) {
 
         double muutosX = x * Math.cos(Math.toRadians(this.spritePolygon.getRotate()));
@@ -177,6 +164,19 @@ public abstract class Sprite {
 
         this.movement = this.movement.add(muutosX, muutosY);
 
+    }
+
+    public void accelerate() {
+
+        double muutosX = Math.cos(Math.toRadians(this.spritePolygon.getRotate()));
+        double muutosY = Math.sin(Math.toRadians(this.spritePolygon.getRotate()));
+
+        muutosX *= 0.0005;
+        muutosY *= 0.0005;
+
+        if (!(muutosX > 0.05 || muutosY > 0.05)) {
+            this.movement = this.movement.add(muutosX, muutosY);
+        }
     }
 
     public void slowDown() {
@@ -195,6 +195,9 @@ public abstract class Sprite {
         return movement;
     }
 
+    /**
+     * basic sprite movement doesn't allow out of bounds movement
+     */
     public void move() {
         this.spritePolygon.setTranslateX(this.spritePolygon.getTranslateX() + this.movement.getX());
         this.spritePolygon.setTranslateY(this.spritePolygon.getTranslateY() + this.movement.getY());
@@ -223,10 +226,17 @@ public abstract class Sprite {
         return health;
     }
 
-    public double getHealthPercentage() { // rikki
-        return health / 400;
-    }
-
+    /**
+     * sprite loses health
+     * <p>
+     * sprite's health is reduced by x amount. Triggers other methods to update
+     * sprite's colour based on the current health.
+     * </p>
+     *
+     * @param x - amount of health lost
+     * @return if the damage 'kills' the sprite return true, otherwise false
+     * @see hitColour();, updateColour();
+     */
     public boolean damage(int x) {
         this.health -= x;
 
@@ -249,6 +259,5 @@ public abstract class Sprite {
     }
 
     public void patrol() {
-        
     }
 }

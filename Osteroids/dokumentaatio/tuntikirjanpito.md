@@ -18,5 +18,6 @@
 |18.4	|2	|testejä lisää, bugiFixaus ja firstRelease|
 |19.4	|2	|jar-tiedoston luonti, asioiden uudelleen-
 |	|	|nimeäminen, kaavioiden päivittely	|
-	 =
-	27
+|24.4	|3	|Boss-vihollinen tehty, muutama testi	|
+|	|	|lisätty, 				|
+|	|=30	|	

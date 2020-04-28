@@ -3,7 +3,6 @@
 <p>
 Ohjelman pakkausrakenne on seuraavanlainen:
 </p>
-![](https://github.com/ArtKoski/ot-harjoitustyo/blob/master/Osteroids/dokumentaatio/kuvat/draft.png)
 <img src="https://github.com/ArtKoski/ot-harjoitustyo/blob/master/Osteroids/dokumentaatio/kuvat/draft.png">
 <p>
 GUI sisältää graafisen käyttöliittymän sekä tarvittavat JavaFX-toiminnot peliä
@@ -19,7 +18,7 @@ Pelin loputtua siirrytään skeneen, jossa käyttäjä pystyy joko pelaamaan uud
 Seuraava sekvenssikaavio kuvaa skenejen toiminnallisuutta. Nuolet ovat Button-olioita, ja LOSE/WIN viittaa pelin
 lopputulokseen.
 </p>
-![](https://github.com/ArtKoski/ot-harjoitustyo/blob/master/Osteroids/dokumentaatio/kuvat/GUI.png)
+<img src="https://github.com/ArtKoski/ot-harjoitustyo/blob/master/Osteroids/dokumentaatio/kuvat/GUI.png">
 
 
 ### Liikkuvien objektien toteutus

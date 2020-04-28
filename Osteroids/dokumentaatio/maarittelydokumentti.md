@@ -23,7 +23,7 @@ Näkymiä yhteensä ainakin: 1. Alkuskene, (2. Tunnuksen tekeminen), 3. Pelisken
  _Itse peli_\
 -Käyttäjän kontrolloima hahmo[done]\
 -Hahmo "kuolee" jos osuu muihin objekteihin[done]\
--Toiminnallisuus tuhota muita objekteja,~~josta saa pisteitä~~[done]\
+-Toiminnallisuus tuhota muita objekteja,~~josta saa pisteitä~~[done]  
 
 ## *Jatkokehitysideoita*
 -Hiscoret aikaan perustuen\

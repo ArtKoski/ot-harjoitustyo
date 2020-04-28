@@ -4,6 +4,7 @@
 Ohjelman pakkausrakenne on seuraavanlainen:
 </p>
 ![](https://github.com/ArtKoski/ot-harjoitustyo/blob/master/Osteroids/dokumentaatio/kuvat/draft.png)
+<img src="https://github.com/ArtKoski/ot-harjoitustyo/blob/master/Osteroids/dokumentaatio/kuvat/draft.png">
 <p>
 GUI sisältää graafisen käyttöliittymän sekä tarvittavat JavaFX-toiminnot peliä
 varten. Itse pelin logiikka taas löytyy gamelogic-pakkauksesta.

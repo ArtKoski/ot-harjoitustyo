@@ -15,9 +15,7 @@ ja kerätä pisteitä.
 Näkymiä yhteensä ainakin: 1. Alkuskene, (2. Tunnuksen tekeminen), 3. Peliskene  4. Voitto/Häviö-scene 5. Pistetulokset
 
 ## *Perusversion toiminnallisuus*
-~~_Ennen kirjautumista_
--Käyttäjätunnuksen luonti\
--Sisäänkirjautuminen\~~ [scrapped]
+~~_Ennen kirjautumista_-Käyttäjätunnuksen luonti\-Sisäänkirjautuminen~~ [scrapped]
 
 -Start-nappula josta peliin\
 -Pelin päätyttyä kysytään nimeä, joka voidaan sitten tallentaa halutulla tavalla

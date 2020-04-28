@@ -53,15 +53,15 @@ public class SpriteTest {
 
     @Test
     public void RightTurnCorrectAmount() {
-        sprite.toRight();
-        sprite.toRight();
+        sprite.toRight(0.3);
+        sprite.toRight(0.3);
         assertEquals(0.6, sprite.getPoly().getRotate(), 0.001);
     }
 
     @Test
     public void LeftTurnCorrectAmount() {
-        sprite.toLeft();
-        sprite.toLeft();
+        sprite.toLeft(0.3);
+        sprite.toLeft(0.3);
         assertEquals(-0.6, sprite.getPoly().getRotate(), 0.001);
     }
 
@@ -86,8 +86,8 @@ public class SpriteTest {
     public void spriteCanMove() {
         for (int i = 0; i < 5; i++) {
             sprite.move();
-            sprite.toLeft();
-            sprite.accelerate(5, 5);
+            sprite.toLeft(0.3);
+            sprite.accelerate(5);
             sprite.move();
         }
         //X and Y coords different from start point
@@ -110,7 +110,7 @@ public class SpriteTest {
     @Test
     public void bulletDiesWhenOB() {
         for (int i = 0; i < 50; i++) {
-            sprite5.accelerate(10, 10);
+            sprite5.accelerate(10);
             sprite5.move();
         }
 
@@ -142,7 +142,7 @@ public class SpriteTest {
         int rotateKerroin = 1;
         for (int i = 0; i < 10000; i++) {
             sprite.move();
-            sprite.accelerate();
+            sprite.accelerate(0.0005);
             if (i % 2500 == 0) {
                 sprite.setMovement(new Point2D(0, 0));
                 sprite.getPoly().setRotate(90 * rotateKerroin);

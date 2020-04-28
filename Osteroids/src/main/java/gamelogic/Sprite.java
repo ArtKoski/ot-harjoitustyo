@@ -13,6 +13,11 @@ import javafx.scene.shape.Polygon;
 import javafx.scene.shape.Shape;
 
 /**
+ * Basis for all Sprites
+ * <p>
+ * All moving objects extend this class. Allows movement, rotation, logic behind
+ * damage/dying, colours based on hp
+ * </p>
  *
  * @author artkoski
  */
@@ -30,6 +35,14 @@ public abstract class Sprite {
     public boolean alive;
     int tmpr;
 
+    /**
+     * Create a sprite.
+     *
+     * @param poly - shape of sprite (different object have different shapes)
+     * @param x - spawn coordinate x
+     * @param y - spawn coordinate y
+     * @param hp - health when spawned
+     */
     public Sprite(Polygon poly, int x, int y, int hp) {
         this.spritePolygon = poly;
         this.spritePolygon.setTranslateX(x);
@@ -46,7 +59,7 @@ public abstract class Sprite {
     }
 
     /**
-     * grants the sprite immunity to damage
+     * Grants the sprite immunity to damage.
      * <p>
      * health is temporarily set to a high amount and returns to normal whenever
      * the counterpart method immunityOff() is called.
@@ -59,26 +72,31 @@ public abstract class Sprite {
         spritePolygon.setOpacity(80);
     }
 
+    /**
+     * Turns off immunity.
+     * <p>
+     * Health set back to amount before immunity.
+     * </p>
+     */
     public void immunityOff() {
         health = tmpr;
         spritePolygon.setOpacity(100);
         updateColour();
     }
 
-    void hitColour() {
-        try {
-            Paint tmpr = spritePolygon.getFill();
-            for (int i = 0; i < 1000; i++) {
+    void hitColour() { //CHECK FUNCTIONALITY
+        Paint colourATM = spritePolygon.getFill();
+        for (int i = 0; i < 1000; i++) {
 
-                this.spritePolygon.setFill(Color.LIGHTPINK);
-                this.spritePolygon.setFill(tmpr);                          //TÄHÄN JOKU PIENI TIMER
-            }
-        } catch (Exception e) {
-            System.out.println("lul");
+            this.spritePolygon.setFill(Color.LIGHTPINK);
+            this.spritePolygon.setFill(colourATM);                          //TÄHÄN JOKU PIENI TIMER
         }
     }
 
-    void updateColour() {
+    /**
+     * Updates colour based on HP.
+     */
+    void updateColour() { //CHANGE TO PERCENTAGES!!!
         if (this.health >= 400) {
             spritePolygon.setFill(Color.GREEN);
         }
@@ -93,7 +111,10 @@ public abstract class Sprite {
         }
     }
 
-    public void die() {        //PIENI ANIMAATIO??
+    /**
+     * Called when sprites health goes to zero.
+     */
+    public void die() {        //Needs something.
 
         for (int i = 1; i <= 100; i++) {
             this.spritePolygon.setOpacity(spritePolygon.getOpacity() - 0.01);
@@ -102,7 +123,7 @@ public abstract class Sprite {
     }
 
     /**
-     * when sprites collide with each other
+     * Detects collision between sprites.
      *
      * @param other - another sprite
      * @return true if collision detected with other sprite, otherwise false
@@ -112,29 +133,27 @@ public abstract class Sprite {
         return tormaysalue.getBoundsInLocal().getWidth() != -1;
     }
 
-    public void toLeft() {
-        this.spritePolygon.setRotate(this.spritePolygon.getRotate() - 0.3);
-        slowDown();
-
-    }
-
-    public void toRight() {
-        this.spritePolygon.setRotate(this.spritePolygon.getRotate() + 0.3);
-        slowDown();
-
-    }
-
+    /**
+     * Turns the sprite to the left by 'amount'.
+     * @param amount - how much the sprite is turned left
+     */
     public void toLeft(double amount) {
         this.spritePolygon.setRotate(this.spritePolygon.getRotate() - amount);
         slowDown();
     }
-
+/**
+ * Turns the sprite to the right by 'amount'.
+ * @param amount - how much the sprite is turned right
+ */
     public void toRight(double amount) {
         this.spritePolygon.setRotate(this.spritePolygon.getRotate() + amount);
         slowDown();
 
     }
 
+    /**
+     * Makes to sprite accelerate backwards movement.
+     */
     public void accelerateBack() {
         double muutosX = Math.cos(Math.toRadians(this.spritePolygon.getRotate()) - Math.PI);
         double muutosY = Math.sin(Math.toRadians(this.spritePolygon.getRotate()) - Math.PI);
@@ -148,41 +167,31 @@ public abstract class Sprite {
     }
 
     /**
-     * accelerate sprites movement
+     * Accelerate sprites movement forward.
      * <p>
      * calculates the sprite's 'front' and adds movement towards that direction.
-     * Amount of acceleration is modified by parameters x and y.
+     * Amount of acceleration is modified by parameter 'amount'.
      * </p>
      *
-     * @param x - acceleration amount relative to x (normal 0.0005)
-     * @param y - acceleration amount relative to y (normal 0.0005)
+     * @param amount - acceleration amount relative to x and y (normal 0.0005)
      */
-    public void accelerate(double x, double y) {
+    public void accelerate(double amount) {
 
-        double muutosX = x * Math.cos(Math.toRadians(this.spritePolygon.getRotate()));
-        double muutosY = y * Math.sin(Math.toRadians(this.spritePolygon.getRotate()));
+        double muutosX = amount * Math.cos(Math.toRadians(this.spritePolygon.getRotate()));
+        double muutosY = amount * Math.sin(Math.toRadians(this.spritePolygon.getRotate()));
 
         this.movement = this.movement.add(muutosX, muutosY);
 
     }
-
-    public void accelerate() {
-
-        double muutosX = Math.cos(Math.toRadians(this.spritePolygon.getRotate()));
-        double muutosY = Math.sin(Math.toRadians(this.spritePolygon.getRotate()));
-
-        muutosX *= 0.0005;
-        muutosY *= 0.0005;
-
-        if (!(muutosX > 0.05 || muutosY > 0.05)) {
-            this.movement = this.movement.add(muutosX, muutosY);
-        }
-    }
-
+/**
+ * Slows down sprites movement a little.
+ */
     public void slowDown() {
         this.movement = this.movement.subtract(movement.getX() * 0.0005, movement.getY() * 0.0005);
     }
-
+/**
+ * Slows down movement a lot. 
+ */
     public void slowDownShift() {
         this.movement = this.movement.subtract(movement.getX() * 0.005, movement.getY() * 0.005);
     }
@@ -196,7 +205,7 @@ public abstract class Sprite {
     }
 
     /**
-     * basic sprite movement doesn't allow out of bounds movement
+     * Basic sprite movement. Doesn't allow out of bounds movement.
      */
     public void move() {
         this.spritePolygon.setTranslateX(this.spritePolygon.getTranslateX() + this.movement.getX());
@@ -227,7 +236,7 @@ public abstract class Sprite {
     }
 
     /**
-     * sprite loses health
+     * Sprite loses health.
      * <p>
      * sprite's health is reduced by x amount. Triggers other methods to update
      * sprite's colour based on the current health.
@@ -257,7 +266,9 @@ public abstract class Sprite {
     public boolean getLiving() {
         return alive;
     }
-
+/**
+ * Method for sprites patrol movement. Different for every sprite, thus defined in sub-classes.
+ */
     public void patrol() {
     }
 }

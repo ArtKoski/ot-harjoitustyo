@@ -7,13 +7,17 @@ package launch;
  */
 
 /**
- *
+ * Needed for javaFX to function.
  * @author artkoski
  */
 import ui.GUI;
 
 public class Main {
 
+    /**
+     * Launch the program.
+     * @param args 
+     */
     public static void main(String[] args) {
         GUI.main(args);
     }

@@ -54,6 +54,15 @@ public class GUI extends Application {
     boolean cooldown = false;
     long cdTimer = 0;
     boolean cleared;
+    long roundTimerStart;
+    long roundTimerEnd;
+    Button startGameButton;
+    Button instructionsButton;
+    Button startGameFromTut;
+    Button tryAgainButton;
+    Button hiScoresButton;
+    Button exitButton;
+    Label gameOverLabel;
 
     public static void main(String[] args) {
         launch(args);
@@ -63,99 +72,41 @@ public class GUI extends Application {
     public void start(Stage ikkuna) {
         random = new Random();
 
-        //ALKURUUTU
-        BorderPane ruutu = new BorderPane();
-        VBox ruudunSisalla = new VBox();
-        ruudunSisalla.setPadding(new Insets(10, 50, 50, 50));
-        ruudunSisalla.setSpacing(10);
+        //FIRST SCENE
+        alkuNakyma = new Scene(alkuRuutu());
 
-        ruutu.setPrefSize(LEVEYS, KORKEUS);
-
-        Button nappi = new Button("START");
-        Button instructionsButton = new Button("HOW TO PLAY");
-        Button Configuration = new Button("CONFIG");                  //asd
-        ruudunSisalla.getChildren().add(nappi);
-        ruudunSisalla.getChildren().add(instructionsButton);
-        ruudunSisalla.setAlignment(Pos.CENTER);
-        ruutu.setCenter(ruudunSisalla);
-
-        nappi.setOnAction(click -> {
+        startGameButton.setOnAction(click -> {
+            roundTimerStart = System.nanoTime();
             ikkuna.setScene(peliNakyma);
         });
-
         instructionsButton.setOnAction(click -> {
             ikkuna.setScene(instructionsScene);
         });
 
-        alkuNakyma = new Scene(ruutu);
-
         //INSTRUCTIONS SCENE
-        BorderPane instructionsLayout = new BorderPane();
-        instructionsLayout.setPrefSize(LEVEYS, KORKEUS);
-        VBox instructionsMenu = new VBox();
-        instructionsMenu.setPadding(new Insets(20, 20, 20, 20));
-        instructionsMenu.setSpacing(10);
+        instructionsScene = new Scene(instructionsScene());
 
-        Label instructionsLabel = new Label("INSTRUCTIONS: \nArrow keys to move\nSHIFT+Arrow keys to slow down\nX to shoot\nE for immunity(disabled atm)\nGoal: spaceship go brrt");  //TÄHÄN KIVEMPI TEXT
-        Button startButton = new Button("START GAME");
-        instructionsMenu.getChildren().addAll(instructionsLabel, startButton);
-        instructionsMenu.setAlignment(Pos.CENTER);
-        instructionsLayout.setCenter(instructionsMenu);
-        instructionsScene = new Scene(instructionsLayout);
-
-        startButton.setOnAction(click -> {
+        startGameFromTut.setOnAction(click -> {
+            roundTimerStart = System.nanoTime(); // TEE VIELÄ LOPPUTIMER JA LASKE TULOS KUN PELI PÄÄÄTTTYY
             ikkuna.setScene(peliNakyma);
         });
 
         //ConfigScene, change enemy damage ETC !!
-        
-        
-        
-        
         //gameOverScene
-        BorderPane gameOverLayout = new BorderPane();
-        gameOverLayout.setPrefSize(LEVEYS, KORKEUS);
-        VBox menu = new VBox();
-        menu.setPadding(new Insets(20, 20, 20, 20));
-        menu.setSpacing(10);
+        gameOverScene = new Scene(gameOverScene("GAME OVER"));
 
-        Label gameOverLabel = new Label("GAME OVER");  //TÄHÄN KIVEMPI TEXT
-        Button tryAgainButton = new Button("TRY AGAIN");
-        Button hiScores = new Button("");
-        Button exitButton = new Button("EXIT");
-        menu.getChildren().addAll(gameOverLabel, tryAgainButton, hiScores);
-        menu.setAlignment(Pos.CENTER);
-        gameOverLayout.setCenter(menu);
-        gameOverScene = new Scene(gameOverLayout);
-
-        //gameOverSceneVictory
-        BorderPane gameOverVictory = new BorderPane();
-        gameOverVictory.setPrefSize(LEVEYS, KORKEUS);
-        VBox menuV = new VBox();
-        menuV.setPadding(new Insets(20, 20, 20, 20));
-        menuV.setSpacing(10);
-
-        Label gameOverLabelVictory = new Label("VICTORY");  //TÄHÄN KIVEMPI TEXT
-        Button tryAgainButtonV = new Button("TRY AGAIN");
-        Button hiScoresV = new Button("HISCORES");
-        Button exitButtonV = new Button("EXIT");
-        menuV.getChildren().addAll(gameOverLabelVictory, hiScoresV, tryAgainButtonV);
-        menuV.setAlignment(Pos.CENTER);
-        gameOverVictory.setCenter(menuV);
-        gameOverSceneVictory = new Scene(gameOverVictory);
-
-        //Pelinäkymä
+        //gameScene
         Pane peliRuutu = new Pane();
         peliRuutu.setPrefSize(LEVEYS, KORKEUS);
 
-        //ADD HERO
+        //ADD HERO - can be done elsewhere
         hero = new Hero(150, 100);
         peliRuutu.getChildren().add(hero.getPoly());
 
-        //ADD TUT ENEMY
+        //Start Game 
         tut(peliRuutu);
 
-        //ROUND/SCORE TEXT
+        //ROUND/SCORE TEXT  -- own method 4 this
         Text roundATM = new Text();
         Text scoreText = new Text();
         roundATM.setText("Tutorial");
@@ -183,11 +134,11 @@ public class GUI extends Application {
             @Override
             public void handle(long nykyhetki) {
                 if (painetutNapit.getOrDefault(KeyCode.LEFT, false)) {
-                    hero.toLeft();
+                    hero.toLeft(0.3);
                 }
 
                 if (painetutNapit.getOrDefault(KeyCode.RIGHT, false)) {
-                    hero.toRight();
+                    hero.toRight(0.3);
                 }
                 if (painetutNapit.getOrDefault(KeyCode.DOWN, false)) {
                     hero.accelerateBack();
@@ -200,7 +151,7 @@ public class GUI extends Application {
                 }
 
                 if (painetutNapit.getOrDefault(KeyCode.UP, false)) {
-                    hero.accelerate();
+                    hero.accelerate(0.0005);
                 }
 
                 //IMMUNITY COOLDOWN && TIMER, little broken ATM
@@ -229,7 +180,7 @@ public class GUI extends Application {
                     shot.getPoly().setRotate(hero.spritePolygon.getRotate());
                     ammo.add(shot);
 
-                    shot.accelerate();
+                    shot.accelerate(0.0005);
                     shot.setMovement(shot.getMovement().normalize().multiply(1.5));
 
                     peliRuutu.getChildren().add(shot.getPoly());
@@ -267,10 +218,12 @@ public class GUI extends Application {
                         round3Boss(peliRuutu);
                     }
                     if (round == 4) {
-                        gameOverLabelVictory.setText("VICTORY! \nScore: " + score + "\nRound: " + round);
+                        roundTimerEnd = System.nanoTime();
+                        gameOverLabel.setText("VICTORY! \nScore: " + score + "\nRound: " + round + "\nTime: " + ((roundTimerEnd - roundTimerStart) / 1e9) + " s");
+                        roundTimerStart = System.nanoTime();
                         resetRound(peliRuutu);
                         painetutNapit.clear();
-                        ikkuna.setScene(gameOverSceneVictory);
+                        ikkuna.setScene(gameOverScene);
                     }
                 }
 
@@ -306,7 +259,7 @@ public class GUI extends Application {
                             shot.getPoly().setRotate(Math.toDegrees(Math.atan2(hero.getPoly().getTranslateY() - shot.getPoly().getTranslateY(), hero.getPoly().getTranslateX() - shot.getPoly().getTranslateX())) + spray);
                             enemyAmmo.add(shot);
 
-                            shot.accelerate();
+                            shot.accelerate(0.0005);
                             shot.setMovement(shot.getMovement().normalize().multiply(0.2));
 
                             peliRuutu.getChildren().add(shot.getPoly());
@@ -317,7 +270,7 @@ public class GUI extends Application {
                                 shot.getPoly().setRotate(enemy.getPoly().getRotate() + 36 * i);
                                 enemyAmmo.add(shot);
 
-                                shot.accelerate();
+                                shot.accelerate(0.0005);
                                 shot.setMovement(shot.getMovement().normalize().multiply(0.2));
 
                                 peliRuutu.getChildren().add(shot.getPoly());
@@ -386,9 +339,14 @@ public class GUI extends Application {
                 //HERO DEAD
                 if (!hero.alive) {
                     painetutNapit.clear();
-                    animateUsingTimeline(hero.getPoly(), 1.0, 1.4);
-                    gameOverLabel.setText("GAME OVER \nScore: " + score + "\nRound: " + round);
+
+                    roundTimerEnd = System.nanoTime();
+                    double time = Math.ceil((roundTimerEnd - roundTimerStart) / 1e9);   //FIX
+                    //animateUsingTimeline(hero.getPoly(), 1.0, 1.4);
+
+                    gameOverLabel.setText("GAME OVER \nScore: " + score + "\nRound: " + round + "\nTime: " + time + " s");
                     ikkuna.setScene(gameOverScene);
+                    resetRound(peliRuutu);
                     peliRuutu.getChildren().remove(hero.spritePolygon);
 
                     // TOO FAST ATM, FIX
@@ -404,13 +362,6 @@ public class GUI extends Application {
             ikkuna.setScene(peliNakyma);
         });
 
-        tryAgainButtonV.setOnAction(click -> {
-            resetRound(peliRuutu);
-            roundATM.setText("Tutorial");
-            scoreText.setText("Points: " + score);
-            ikkuna.setScene(peliNakyma);
-        });
-        
         exitButton.setOnAction(click -> {
             ikkuna.close();
         });
@@ -425,6 +376,8 @@ public class GUI extends Application {
     void resetRound(Pane peliRuutu) {
         round = 0;
         score = 0;
+        roundTimerStart = System.nanoTime();
+
         peliRuutu.getChildren().remove(hero.getPoly());
         for (Sprite e : enemies) {
             e.alive = false;
@@ -479,7 +432,7 @@ public class GUI extends Application {
             shot.getPoly().setRotate(rotate);
             enemyAmmo.add(shot);
 
-            shot.accelerate();
+            shot.accelerate(0.0005);
             shot.setMovement(shot.getMovement().normalize().multiply(0.1));
 
             pane.getChildren().add(shot.getPoly());
@@ -495,7 +448,7 @@ public class GUI extends Application {
             shot.getPoly().setRotate(rotate);
             enemyAmmo.add(shot);
 
-            shot.accelerate();
+            shot.accelerate(0.0005);
             shot.setMovement(shot.getMovement().normalize().multiply(0.1));
 
             pane.getChildren().add(shot.getPoly());
@@ -503,6 +456,58 @@ public class GUI extends Application {
         }
         cleared = false;
 
+    }
+
+    Pane alkuRuutu() {
+        BorderPane ruutu = new BorderPane();
+        VBox ruudunSisalla = new VBox();
+        ruudunSisalla.setPadding(new Insets(10, 50, 50, 50));
+        ruudunSisalla.setSpacing(10);
+
+        ruutu.setPrefSize(LEVEYS, KORKEUS);
+
+        startGameButton = new Button("START");
+        instructionsButton = new Button("HOW TO PLAY");
+        Button Configuration = new Button("CONFIG");                  //final week stuff maby
+        ruudunSisalla.getChildren().add(startGameButton);
+        ruudunSisalla.getChildren().add(instructionsButton);
+        ruudunSisalla.setAlignment(Pos.CENTER);
+        ruutu.setCenter(ruudunSisalla);
+
+        return ruutu;
+
+    }
+
+    Pane instructionsScene() {
+        BorderPane instructionsLayout = new BorderPane();
+        instructionsLayout.setPrefSize(LEVEYS, KORKEUS);
+        VBox instructionsMenu = new VBox();
+        instructionsMenu.setPadding(new Insets(20, 20, 20, 20));
+        instructionsMenu.setSpacing(10);
+
+        Label instructionsLabel = new Label("INSTRUCTIONS: \nArrow keys to move\nSHIFT+Arrow keys to slow down\nX to shoot\nE for immunity(disabled atm)\nGoal: spaceship go brrt");  //TÄHÄN KIVEMPI TEXT
+        startGameFromTut = new Button("START GAME");
+        instructionsMenu.getChildren().addAll(instructionsLabel, startGameFromTut);
+        instructionsMenu.setAlignment(Pos.CENTER);
+        instructionsLayout.setCenter(instructionsMenu);
+        return instructionsLayout;
+    }
+
+    Pane gameOverScene(String result) {
+        BorderPane gameOverLayout = new BorderPane();
+        gameOverLayout.setPrefSize(LEVEYS, KORKEUS);
+        VBox menu = new VBox();
+        menu.setPadding(new Insets(20, 20, 20, 20));
+        menu.setSpacing(10);
+
+        gameOverLabel = new Label(result);  //TÄHÄN KIVEMPI TEXT
+        tryAgainButton = new Button("TRY AGAIN");
+        hiScoresButton = new Button("HISCORES");
+        exitButton = new Button("EXIT");
+        menu.getChildren().addAll(gameOverLabel, tryAgainButton, hiScoresButton, exitButton);
+        menu.setAlignment(Pos.CENTER);
+        gameOverLayout.setCenter(menu);
+        return gameOverLayout;
     }
 
     //HIT ANIMATION
@@ -520,7 +525,7 @@ public class GUI extends Application {
         beat.play();
         return true;
     }
-
+    /*
     private boolean animateUsingTimeline2(Polygon thing, double value1, double value2) { //not used atm
         DoubleProperty scale = new SimpleDoubleProperty(1);
         thing.scaleXProperty().bind(scale);
@@ -537,5 +542,5 @@ public class GUI extends Application {
         //}
 
         return true;
-    }
+    }*/
 }

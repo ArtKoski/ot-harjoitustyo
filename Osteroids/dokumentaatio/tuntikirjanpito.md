@@ -20,4 +20,6 @@
 |	|	|nimeäminen, kaavioiden päivittely	|
 |24.4	|3	|Boss-vihollinen tehty, muutama testi	|
 |	|	|lisätty, 				|
-|	|=30	|	
+|28.4	|4	|Koodin putsaaminen, checkstyle virheiden
+|	|	|vähentäminen sekä javadocin valmistelu	|
+|	|=34	|	

@@ -22,4 +22,7 @@
 |	|	|lisätty, 				|
 |28.4	|4	|Koodin putsaaminen, checkstyle virheiden
 |	|	|vähentäminen sekä javadocin valmistelu	|
-|	|=34	|	
+|6.5	|6	|Google-Sheets kirjoittaminen sekä luke-|
+|	|	|minen (leaderboards) sekä skenejen uudel-|
+|	|	|leenkokoaminen omiin metodeihin	|
+|	|=40

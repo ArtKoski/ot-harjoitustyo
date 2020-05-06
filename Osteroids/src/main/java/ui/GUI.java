@@ -6,7 +6,13 @@
 package ui;
 
 import gamelogic.*;
+import java.io.IOException;
+import java.security.GeneralSecurityException;
+import java.text.ParseException;
+import scores.*;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import javafx.animation.AnimationTimer;
 import javafx.animation.KeyFrame;
@@ -27,6 +33,7 @@ import javafx.util.Duration;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 
@@ -36,13 +43,14 @@ import javafx.scene.layout.VBox;
  */
 public class GUI extends Application {
 
+    SheetsLeaderBoards hiScores = new SheetsLeaderBoards();
     public static int LEVEYS = 600;
     public static int KORKEUS = 400;
     private Scene peliNakyma;
     private Scene alkuNakyma;
     private Scene gameOverScene;
-    private Scene gameOverSceneVictory;
     private Scene instructionsScene;
+    Pane peliRuutu;
     List<Bullet> ammo = new ArrayList<>();
     List<Bullet> enemyAmmo = new ArrayList<>();
     List<Sprite> enemies = new ArrayList<>();
@@ -62,41 +70,48 @@ public class GUI extends Application {
     Button tryAgainButton;
     Button hiScoresButton;
     Button exitButton;
-    Label gameOverLabel;
+    Button saveButton;
+    Label gameOverLabel = new Label();
+    Text roundATM = new Text();
+    Text scoreText = new Text();
+
+    final PriorityQueue<Score> bestTimes = new PriorityQueue<Score>();
 
     public static void main(String[] args) {
         launch(args);
     }
 
     @Override
-    public void start(Stage ikkuna) {
-        random = new Random();
+    public void start(Stage firstStage) {
 
-        //FIRST SCENE
         alkuNakyma = new Scene(alkuRuutu());
 
         startGameButton.setOnAction(click -> {
             roundTimerStart = System.nanoTime();
-            ikkuna.setScene(peliNakyma);
-        });
-        instructionsButton.setOnAction(click -> {
-            ikkuna.setScene(instructionsScene);
+            startGame(firstStage);
         });
 
-        //INSTRUCTIONS SCENE
+        instructionsButton.setOnAction(click -> {
+            firstStage.setScene(instructionsScene);
+        });
+
         instructionsScene = new Scene(instructionsScene());
 
         startGameFromTut.setOnAction(click -> {
             roundTimerStart = System.nanoTime(); // TEE VIELÄ LOPPUTIMER JA LASKE TULOS KUN PELI PÄÄÄTTTYY
-            ikkuna.setScene(peliNakyma);
+            startGame(firstStage);
         });
 
-        //ConfigScene, change enemy damage ETC !!
-        //gameOverScene
-        gameOverScene = new Scene(gameOverScene("GAME OVER"));
+        firstStage.setScene(alkuNakyma);
+        firstStage.show();
+    }
 
+    public void startGame(Stage ikkuna) {
+        random = new Random();
+
+        //ConfigScene, change enemy damage ETC !!
         //gameScene
-        Pane peliRuutu = new Pane();
+        peliRuutu = new Pane();
         peliRuutu.setPrefSize(LEVEYS, KORKEUS);
 
         //ADD HERO - can be done elsewhere
@@ -107,8 +122,6 @@ public class GUI extends Application {
         tut(peliRuutu);
 
         //ROUND/SCORE TEXT  -- own method 4 this
-        Text roundATM = new Text();
-        Text scoreText = new Text();
         roundATM.setText("Tutorial");
         scoreText.setText("Points: " + score);
         roundATM.setText(String.valueOf(score));
@@ -218,12 +231,10 @@ public class GUI extends Application {
                         round3Boss(peliRuutu);
                     }
                     if (round == 4) {
-                        roundTimerEnd = System.nanoTime();
-                        gameOverLabel.setText("VICTORY! \nScore: " + score + "\nRound: " + round + "\nTime: " + ((roundTimerEnd - roundTimerStart) / 1e9) + " s");
-                        roundTimerStart = System.nanoTime();
-                        resetRound(peliRuutu);
                         painetutNapit.clear();
-                        ikkuna.setScene(gameOverScene);
+                        gameEndScore("VICTORY!");
+                        gameOverStage(ikkuna);
+                        stop();
                     }
                 }
 
@@ -236,15 +247,17 @@ public class GUI extends Application {
                 });
 
                 //BOSS THINGIES
-                if (enemies.get(0).getClass() == EnemySpecial.class) {
-                    if (nykyhetki % 3000 == 0) {
+                if (nykyhetki % 3000 == 0) {
+                    if (enemies.get(0).getClass() == EnemySpecial.class) {
                         round3(peliRuutu, 40, 0, 2, 2);
                         round3(peliRuutu, 40, 180, 598, 2);
-                    }
-                    if (nykyhetki % 5000 == 0) {
-                        round3Vertical(peliRuutu, 40, 270, 2, 398);
-                        round3Vertical(peliRuutu, 40, 90, 2, 2);
 
+                        if (nykyhetki % 5000 == 0) {
+                            int number = 25 + random.nextInt(40);
+                            int number2 = 25 + random.nextInt(40);
+                            round3Vertical(peliRuutu, number, 270, 2, 398);
+                            round3Vertical(peliRuutu, number2, 90, 2, 2);
+                        }
                     }
                 }
 
@@ -340,34 +353,19 @@ public class GUI extends Application {
                 if (!hero.alive) {
                     painetutNapit.clear();
 
-                    roundTimerEnd = System.nanoTime();
-                    double time = Math.ceil((roundTimerEnd - roundTimerStart) / 1e9);   //FIX
                     //animateUsingTimeline(hero.getPoly(), 1.0, 1.4);
+                    gameEndScore("FAILURE");
+                    gameOverStage(ikkuna);
+                    stop();
 
-                    gameOverLabel.setText("GAME OVER \nScore: " + score + "\nRound: " + round + "\nTime: " + time + " s");
-                    ikkuna.setScene(gameOverScene);
-                    resetRound(peliRuutu);
-                    peliRuutu.getChildren().remove(hero.spritePolygon);
-
+                    //peliRuutu.getChildren().remove(hero.spritePolygon);
                     // TOO FAST ATM, FIX
                 }
             }
         }.start();
 
-        //gameOverButton
-        tryAgainButton.setOnAction(click -> {
-            resetRound(peliRuutu);
-            roundATM.setText("Tutorial  ");
-            scoreText.setText("Points: " + score);
-            ikkuna.setScene(peliNakyma);
-        });
-
-        exitButton.setOnAction(click -> {
-            ikkuna.close();
-        });
-
         //---
-        ikkuna.setScene(alkuNakyma);
+        ikkuna.setScene(peliNakyma);
         ikkuna.show();
 
     }
@@ -389,14 +387,209 @@ public class GUI extends Application {
             peliRuutu.getChildren().remove(e.getPoly());
         }
         enemyAmmo.clear();
-        hero = new Hero(150, 100);
-        peliRuutu.getChildren().add(hero.getPoly());
-
-        tut(peliRuutu);
 
     }
-// ROUNDS OF ENEMIES
 
+    void restart(Stage ikkuna) { //kinda useless ?
+        startGame(ikkuna);
+    }
+
+    void scoreSaveStage(Stage ikkuna) {
+
+        BorderPane nameSetLayout = new BorderPane();
+        nameSetLayout.setPrefSize(150, 200);
+        VBox menu = new VBox();
+        menu.setPadding(new Insets(20, 20, 20, 20));
+        menu.setSpacing(10);
+        Label l = new Label("NAME:");
+        TextField tf = new TextField();
+        saveButton = new Button("SAVE BEST SCORE");
+        menu.getChildren().addAll(l, tf, saveButton);
+        menu.setAlignment(Pos.CENTER);
+        nameSetLayout.setCenter(menu);
+
+        saveButton.setOnAction(click -> {
+            if (tf.getLength() < 2) {
+                nameSetLayout.getChildren().add(new Label("Minimum 2 characters!"));
+            } else {
+                try {
+                    hiScores.leaderboardUpdate(tf.getText(), bestTimes.poll());
+
+                    leaderboardsStage(ikkuna);
+                } catch (IOException ex) {
+                    System.out.println("Problems with updating leaderboards..");
+                } catch (GeneralSecurityException ex) {
+                    System.out.println("Problems with updating leaderboards..");
+                } catch (ParseException ex) {
+                    Logger.getLogger(GUI.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        });
+
+        Scene nameScene = new Scene(nameSetLayout);
+        ikkuna.setScene(nameScene);
+
+    }
+
+    void leaderboardsStage(Stage ikkuna) throws IOException, GeneralSecurityException, ParseException {
+
+        BorderPane lbLayout = new BorderPane();
+        lbLayout.setPrefSize(LEVEYS, KORKEUS);
+        VBox menu = new VBox();
+        VBox menuScores = new VBox();
+        menu.setPadding(new Insets(20, 20, 20, 20));
+        menu.setSpacing(10);
+
+        Label l = new Label("LEADERBOARD");
+        menuScores.getChildren().add(l);
+
+        PriorityQueue<Score> tmpr = hiScores.search();
+        int ranking = 1;
+        while (!tmpr.isEmpty()) {
+            menuScores.getChildren().add(new Text(ranking + ". " + tmpr.poll().toString()));
+            ranking++;
+        }
+
+        Button tryAgainButton = new Button("PLAY AGAIN");
+        Button exitButton = new Button("EXIT");
+        menu.getChildren().addAll(tryAgainButton, exitButton);
+        menu.setAlignment(Pos.CENTER_LEFT);
+        menuScores.setAlignment(Pos.CENTER_RIGHT);
+        lbLayout.setCenter(menu);
+        lbLayout.setRight(menuScores);
+
+        tryAgainButton.setOnAction(click -> {
+            resetRound(peliRuutu);
+            roundATM.setText("Tutorial  ");  //move these?
+            scoreText.setText("Points: " + score);
+            restart(ikkuna);
+        });
+
+        exitButton.setOnAction(click -> {
+            ikkuna.close();
+        });
+
+        Scene leaderboardScene = new Scene(lbLayout);
+        ikkuna.setScene(leaderboardScene);
+
+    }
+
+    void gameEndScore(String WorL) {
+        roundTimerEnd = System.nanoTime();
+        double time = (Math.round((roundTimerEnd - roundTimerStart) / 1e9 * 100.0)) / 100.0;
+        //Score oldBest = bestTimes.peek();
+        Score newScore = new Score(time, round);
+        bestTimes.add(newScore);
+
+        if (bestTimes.peek().equals(newScore)) {
+            gameOverLabel.setText(WorL
+                    + "\nNew Session Best!: " + bestTimes.peek().getTime() + " s, round " + bestTimes.peek().getRound());
+
+        } else {
+            gameOverLabel.setText(WorL + " \nTime: " + time + ", round: " + round
+                    + "\nSession Best: " + bestTimes.peek().getTime() + " s, round " + bestTimes.peek().getRound());
+        }
+    }
+
+    Pane alkuRuutu() {
+        BorderPane ruutu = new BorderPane();
+        VBox ruudunSisalla = new VBox();
+        ruudunSisalla.setPadding(new Insets(10, 50, 50, 50));
+        ruudunSisalla.setSpacing(10);
+
+        ruutu.setPrefSize(LEVEYS, KORKEUS);
+
+        startGameButton = new Button("START");
+        instructionsButton = new Button("HOW TO PLAY");
+        Button Configuration = new Button("CONFIG");                  //final week stuff maby
+        ruudunSisalla.getChildren().add(startGameButton);
+        ruudunSisalla.getChildren().add(instructionsButton);
+        ruudunSisalla.setAlignment(Pos.CENTER);
+        ruutu.setCenter(ruudunSisalla);
+
+        return ruutu;
+
+    }
+
+    Pane instructionsScene() {
+        BorderPane instructionsLayout = new BorderPane();
+        instructionsLayout.setPrefSize(LEVEYS, KORKEUS);
+        VBox instructionsMenu = new VBox();
+        instructionsMenu.setPadding(new Insets(20, 20, 20, 20));
+        instructionsMenu.setSpacing(10);
+
+        Label instructionsLabel = new Label("INSTRUCTIONS: \nArrow keys to move\nSHIFT+Arrow keys to slow down\nX to shoot\nE for immunity(disabled atm)\nGoal: spaceship go brrt");  //TÄHÄN KIVEMPI TEXT
+        startGameFromTut = new Button("START GAME");
+        instructionsMenu.getChildren().addAll(instructionsLabel, startGameFromTut);
+        instructionsMenu.setAlignment(Pos.CENTER);
+        instructionsLayout.setCenter(instructionsMenu);
+        return instructionsLayout;
+    }
+
+    void gameOverStage(Stage ikkuna) {
+        BorderPane gameOverLayout = new BorderPane();
+        gameOverLayout.setPrefSize(LEVEYS, KORKEUS);
+        VBox menu = new VBox();
+        menu.setPadding(new Insets(20, 20, 20, 20));
+        menu.setSpacing(10);
+
+        //gameOverLabel = new Label(result);  //TÄHÄN KIVEMPI TEXT
+        Button tryAgainButton = new Button("TRY AGAIN");
+        Button saveScoreFromGameOverButton = new Button("SAVE SCORE");
+        Button hiScoresButton = new Button("CHECK LEADERBOARDS");
+        Button exitButton = new Button("EXIT");
+        menu.getChildren().addAll(gameOverLabel, tryAgainButton, saveScoreFromGameOverButton, hiScoresButton, exitButton);
+        menu.setAlignment(Pos.CENTER);
+        gameOverLayout.setCenter(menu);
+
+        tryAgainButton.setOnAction(click -> {
+            resetRound(peliRuutu);
+            roundATM.setText("Tutorial  ");  //move these?
+            scoreText.setText("Points: " + score);
+            restart(ikkuna);
+        });
+
+        exitButton.setOnAction(click -> {
+            ikkuna.close();
+        });
+        saveScoreFromGameOverButton.setOnAction(click -> {
+            scoreSaveStage(ikkuna);
+        });
+        hiScoresButton.setOnAction(click -> {
+            try {
+                leaderboardsStage(ikkuna);
+            } catch (IOException ex) {
+                Logger.getLogger(GUI.class.getName()).log(Level.SEVERE, null, ex);   //clean up?
+            } catch (GeneralSecurityException ex) {
+                Logger.getLogger(GUI.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (ParseException ex) {
+                Logger.getLogger(GUI.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        });
+
+        gameOverScene = new Scene(gameOverLayout);
+        ikkuna.setScene(gameOverScene);
+        ikkuna.show();
+
+    }
+
+    //HIT ANIMATION
+    private boolean animateUsingTimeline(Polygon thing, double value1, double value2) {
+        DoubleProperty scale = new SimpleDoubleProperty(1);
+        thing.scaleXProperty().bind(scale);
+        thing.scaleYProperty().bind(scale);
+
+        Timeline beat = new Timeline(
+                new KeyFrame(Duration.ZERO, event -> scale.setValue(value1)),
+                new KeyFrame(Duration.seconds(0.1), event -> scale.setValue(value2))
+        );
+        beat.setAutoReverse(true);
+        beat.setCycleCount(2);
+        beat.play();
+        return true;
+    }
+
+    // ROUNDS OF ENEMIES
     void tut(Pane pane) {
 
         Enemy tutorialEnemy = new Enemy(300, 150);
@@ -456,74 +649,6 @@ public class GUI extends Application {
         }
         cleared = false;
 
-    }
-
-    Pane alkuRuutu() {
-        BorderPane ruutu = new BorderPane();
-        VBox ruudunSisalla = new VBox();
-        ruudunSisalla.setPadding(new Insets(10, 50, 50, 50));
-        ruudunSisalla.setSpacing(10);
-
-        ruutu.setPrefSize(LEVEYS, KORKEUS);
-
-        startGameButton = new Button("START");
-        instructionsButton = new Button("HOW TO PLAY");
-        Button Configuration = new Button("CONFIG");                  //final week stuff maby
-        ruudunSisalla.getChildren().add(startGameButton);
-        ruudunSisalla.getChildren().add(instructionsButton);
-        ruudunSisalla.setAlignment(Pos.CENTER);
-        ruutu.setCenter(ruudunSisalla);
-
-        return ruutu;
-
-    }
-
-    Pane instructionsScene() {
-        BorderPane instructionsLayout = new BorderPane();
-        instructionsLayout.setPrefSize(LEVEYS, KORKEUS);
-        VBox instructionsMenu = new VBox();
-        instructionsMenu.setPadding(new Insets(20, 20, 20, 20));
-        instructionsMenu.setSpacing(10);
-
-        Label instructionsLabel = new Label("INSTRUCTIONS: \nArrow keys to move\nSHIFT+Arrow keys to slow down\nX to shoot\nE for immunity(disabled atm)\nGoal: spaceship go brrt");  //TÄHÄN KIVEMPI TEXT
-        startGameFromTut = new Button("START GAME");
-        instructionsMenu.getChildren().addAll(instructionsLabel, startGameFromTut);
-        instructionsMenu.setAlignment(Pos.CENTER);
-        instructionsLayout.setCenter(instructionsMenu);
-        return instructionsLayout;
-    }
-
-    Pane gameOverScene(String result) {
-        BorderPane gameOverLayout = new BorderPane();
-        gameOverLayout.setPrefSize(LEVEYS, KORKEUS);
-        VBox menu = new VBox();
-        menu.setPadding(new Insets(20, 20, 20, 20));
-        menu.setSpacing(10);
-
-        gameOverLabel = new Label(result);  //TÄHÄN KIVEMPI TEXT
-        tryAgainButton = new Button("TRY AGAIN");
-        hiScoresButton = new Button("HISCORES");
-        exitButton = new Button("EXIT");
-        menu.getChildren().addAll(gameOverLabel, tryAgainButton, hiScoresButton, exitButton);
-        menu.setAlignment(Pos.CENTER);
-        gameOverLayout.setCenter(menu);
-        return gameOverLayout;
-    }
-
-    //HIT ANIMATION
-    private boolean animateUsingTimeline(Polygon thing, double value1, double value2) {
-        DoubleProperty scale = new SimpleDoubleProperty(1);
-        thing.scaleXProperty().bind(scale);
-        thing.scaleYProperty().bind(scale);
-
-        Timeline beat = new Timeline(
-                new KeyFrame(Duration.ZERO, event -> scale.setValue(value1)),
-                new KeyFrame(Duration.seconds(0.1), event -> scale.setValue(value2))
-        );
-        beat.setAutoReverse(true);
-        beat.setCycleCount(2);
-        beat.play();
-        return true;
     }
     /*
     private boolean animateUsingTimeline2(Polygon thing, double value1, double value2) { //not used atm

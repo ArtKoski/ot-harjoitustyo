@@ -17,7 +17,8 @@ public class Score implements Comparable<Score> {
     String nimi;
     double time;
     int round;
-
+    boolean dead;
+    
     public Score(double time, int round) {
         this.time = time;
         this.round = round;
@@ -35,6 +36,12 @@ public class Score implements Comparable<Score> {
 
     public Integer getRound() {
         return round;
+    }
+    public boolean getDeadorAlive() {
+        return dead;
+    }
+    public void setDeadOrAlive(boolean b) {
+        this.dead=b;
     }
 
     @Override

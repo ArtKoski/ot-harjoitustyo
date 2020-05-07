@@ -43,7 +43,7 @@ import javafx.scene.layout.VBox;
  */
 public class GUI extends Application {
 
-    SheetsLeaderBoards hiScores = new SheetsLeaderBoards();
+    SheetsLeaderBoards hiScores;
     public static int LEVEYS = 600;
     public static int KORKEUS = 400;
     private Scene peliNakyma;
@@ -84,6 +84,9 @@ public class GUI extends Application {
     @Override
     public void start(Stage firstStage) {
 
+        hiScores = new SheetsLeaderBoards();
+        hiScores.init();
+        
         alkuNakyma = new Scene(alkuRuutu());
 
         startGameButton.setOnAction(click -> {

@@ -14,6 +14,7 @@ import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.jackson2.JacksonFactory;
+import static com.google.api.client.json.webtoken.JsonWebSignature.parser;
 import com.google.api.client.util.store.FileDataStoreFactory;
 
 import com.google.api.services.sheets.v4.Sheets;
@@ -24,9 +25,11 @@ import com.google.api.services.sheets.v4.model.ValueRange;
 import java.io.FileInputStream;
 
 import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.Reader;
 import java.security.GeneralSecurityException;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
@@ -38,6 +41,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.PriorityQueue;
+import java.util.Properties;
+import org.json.simple.JSONArray;
+import org.json.simple.parser.JSONParser;
 
 /**
  *
@@ -47,17 +53,21 @@ public class SheetsLeaderBoards {
 
     private static Sheets sheetsService;
     private static String APPLICATION_NAME = "dunno";
-    private static String SPREADSHEET_ID = "1qHyr-Vnvm3_V0qbh2DLfD5lwYXCld1mMnWPYDPH47Ro";
-    private static String CREDENTIALS_FILE_PATH = "/home/artkoski/ot-harjoitustyo/Osteroids/src/main/java/resources/credentials.json";
+    private static String SPREADSHEET_ID;// = "1qHyr-Vnvm3_V0qbh2DLfD5lwYXCld1mMnWPYDPH47Ro";
+    private static String CREDENTIALS_FILE_PATH;
     private static PriorityQueue<Score> topTen;
 
     private static Credential authorize() throws IOException, GeneralSecurityException {
-        //InputStream in = SheetsLeaderBoards.class.getResourceAsStream(CREDENTIALS_FILE_PATH);
-        InputStream in = new FileInputStream(CREDENTIALS_FILE_PATH);
+
+        //ClassLoader classloader = Thread.currentThread().getContextClassLoader();
+        //InputStream in = SheetsLeaderBoards.class.getResourceAsStream("/redentials.json");
+        InputStream in = new FileInputStream("credentials.json");
+        //FileReader f = new FileReader("credentials.json");
+        //InputStream in = new FileInputStream("credentials.json");
+
         if (in == null) {
             throw new FileNotFoundException("Resource not found: " + CREDENTIALS_FILE_PATH);
         }
-
         GoogleClientSecrets clientSecrets = GoogleClientSecrets.load(
                 JacksonFactory.getDefaultInstance(), new InputStreamReader(in)
         );
@@ -67,7 +77,7 @@ public class SheetsLeaderBoards {
                 GoogleNetHttpTransport.newTrustedTransport(), JacksonFactory.getDefaultInstance(),
                 clientSecrets, scopes)
                 .setDataStoreFactory(new FileDataStoreFactory(new java.io.File("tokens")))
-                .setAccessType("offline")
+                .setAccessType("online")
                 .build();
 
         Credential credential = new AuthorizationCodeInstalledApp(
@@ -82,6 +92,19 @@ public class SheetsLeaderBoards {
                 JacksonFactory.getDefaultInstance(), credential)
                 .setApplicationName(APPLICATION_NAME)
                 .build();
+    }
+
+    public void init() {
+        try (InputStream input = new FileInputStream("config.properties")) {
+
+            Properties prop = new Properties();
+            prop.load(input);
+
+            SPREADSHEET_ID = (prop.getProperty("SPREADSHEET_ID"));
+
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
     }
 
     public static void main(String[] args) throws IOException, GeneralSecurityException {

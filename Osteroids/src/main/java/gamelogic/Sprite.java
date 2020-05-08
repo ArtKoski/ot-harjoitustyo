@@ -31,9 +31,10 @@ public abstract class Sprite {
     //ImageView imageView;
     public Polygon spritePolygon;
     public Point2D movement;
-    public int health;
+    public double health;
+    double maxHealth;
     public boolean alive;
-    int tmpr;
+    double tmpr;
 
     /**
      * Create a sprite.
@@ -43,13 +44,15 @@ public abstract class Sprite {
      * @param y - spawn coordinate y
      * @param hp - health when spawned
      */
-    public Sprite(Polygon poly, int x, int y, int hp) {
+    public Sprite(Polygon poly, int x, int y, double hp) {
         this.spritePolygon = poly;
         this.spritePolygon.setTranslateX(x);
         this.spritePolygon.setTranslateY(y);
         this.health = hp;
+        this.maxHealth = hp;
         this.spritePolygon.setFill(Color.GREEN);
         alive = true;
+        
 
         this.movement = new Point2D(0, 0);
     }
@@ -86,27 +89,28 @@ public abstract class Sprite {
 
     void hitColour() { //CHECK FUNCTIONALITY
         Paint colourATM = spritePolygon.getFill();
-        for (int i = 0; i < 1000; i++) {
+        /*for (int i = 0; i < 1000; i++) {
 
             this.spritePolygon.setFill(Color.LIGHTPINK);
             this.spritePolygon.setFill(colourATM);                          //TÄHÄN JOKU PIENI TIMER
-        }
+        }*/
     }
 
     /**
      * Updates colour based on HP.
      */
-    void updateColour() { //CHANGE TO PERCENTAGES!!!
-        if (this.health >= 400) {
+    void updateColour() {
+        this.spritePolygon.setStroke(Color.BLACK);
+        if (getHealthPercentage() >= 1) {
             spritePolygon.setFill(Color.GREEN);
         }
-        if (this.health < 400) {
+        if (getHealthPercentage() < 0.75) {
             spritePolygon.setFill(Color.YELLOW);
         }
-        if (this.health < 200) {
+        if (getHealthPercentage() < 0.5) {
             spritePolygon.setFill(Color.RED);
         }
-        if (this.health < 50) {
+        if (getHealthPercentage() < 0.25) {
             spritePolygon.setFill(Color.DARKRED);
         }
     }
@@ -115,11 +119,12 @@ public abstract class Sprite {
      * Called when sprites health goes to zero.
      */
     public void die() {        //Needs something.
-
+        setLiving(false);
+        /*
         for (int i = 1; i <= 100; i++) {
             this.spritePolygon.setOpacity(spritePolygon.getOpacity() - 0.01);
         }
-
+*/
     }
 
     /**
@@ -152,7 +157,7 @@ public abstract class Sprite {
     }
 
     /**
-     * Makes to sprite accelerate backwards movement.
+     * Makes the sprite accelerate backwards movement.
      */
     public void accelerateBack() {
         double muutosX = Math.cos(Math.toRadians(this.spritePolygon.getRotate()) - Math.PI);
@@ -231,8 +236,11 @@ public abstract class Sprite {
 
     }
 
-    public int getHealth() {
-        return health;
+    public double getHealth() {
+        return Math.round(health);
+    }
+    public double getHealthPercentage() {
+        return health*1.0/maxHealth*1.0;
     }
 
     /**
@@ -246,14 +254,13 @@ public abstract class Sprite {
      * @return if the damage 'kills' the sprite return true, otherwise false
      * @see hitColour();, updateColour();
      */
-    public boolean damage(int x) {
+    public boolean damage(double x) {
         this.health -= x;
 
         hitColour();
         updateColour();
         if (this.health <= 0) {
-            setLiving(false);
-            die();
+            this.die();
             return true;
         }
         return false;

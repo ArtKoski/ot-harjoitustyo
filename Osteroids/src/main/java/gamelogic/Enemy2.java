@@ -20,8 +20,8 @@ public class Enemy2 extends Sprite {
      * @param x - spawn coordinate x
      * @param y  -spawn coordinate y
      */
-    public Enemy2(int x, int y) {
-        super(new Polygon(-20, -10, 10, 0, -20, 10), x, y, 2000);
+    public Enemy2(int x, int y, double hp) {
+        super(new Polygon(-20, -10, 10, 0, -20, 10), x, y, hp);
     }
 
     @Override

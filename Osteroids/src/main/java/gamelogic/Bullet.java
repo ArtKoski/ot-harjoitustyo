@@ -7,6 +7,7 @@ package gamelogic;
 
 import ui.GUI;
 import javafx.scene.shape.Polygon;
+import javafx.scene.shape.Shape;
 
 /** Class for bullets in the game.
  *<p>
@@ -22,8 +23,18 @@ public class Bullet extends Sprite {
      * @param y - spawn coordinate y
      */
     public Bullet(int x, int y) {
-        super(new Polygon(2, -2, 2, 2, -2, 2, -2, -2), x, y, 5);
+        super(new Polygon(1.5, -1.5, 1.5, 1.5, -1.5, 1.5, -1.5, -1.5), x, y, 1);
     }
+    
+    @Override
+    void updateColour() {
+    }
+    @Override 
+    public boolean damage(double x) {
+        die();
+        return true;
+    }
+    
 /**
  * Movement logic for bullets.
  * <p>
@@ -36,19 +47,19 @@ public class Bullet extends Sprite {
         this.spritePolygon.setTranslateY(this.spritePolygon.getTranslateY() + this.movement.getY());
 
         if (this.spritePolygon.getTranslateX() < 0 + 2) {
-            this.setLiving(false);
+            die();
         }
 
         if (this.spritePolygon.getTranslateX() > GUI.LEVEYS - 2) {
-            this.setLiving(false);
+            die();
         }
 
         if (this.spritePolygon.getTranslateY() < 0 + 2) {
-            this.setLiving(false);
+            die();
         }
 
         if (this.spritePolygon.getTranslateY() > GUI.KORKEUS - 2) {
-            this.setLiving(false);
+            die();
         }
 
     }

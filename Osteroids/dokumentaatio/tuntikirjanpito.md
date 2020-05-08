@@ -25,4 +25,10 @@
 |6.5	|6	|Google-Sheets kirjoittaminen sekä luke-|
 |	|	|minen (leaderboards) sekä skenejen uudel-|
 |	|	|leenkokoaminen omiin metodeihin	|
-|	|=40
+|7.5	|6	|leaderboardin bugiFixailu, vaikeustason|
+|	|	|muuttaminen(normal,hard)
+|8.5	|7	|bugien fixailu, logiikan erottelu 	|
+|	|	|UI-toiminnoista, hienosäätöä		|	
+
+
+|	|=53	|

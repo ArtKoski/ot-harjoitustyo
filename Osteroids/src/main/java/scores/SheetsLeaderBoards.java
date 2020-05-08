@@ -42,6 +42,10 @@ import java.util.List;
 import java.util.Locale;
 import java.util.PriorityQueue;
 import java.util.Properties;
+import javafx.geometry.Pos;
+import javafx.scene.control.Label;
+import javafx.scene.layout.VBox;
+import javafx.scene.text.Text;
 import org.json.simple.JSONArray;
 import org.json.simple.parser.JSONParser;
 
@@ -53,17 +57,18 @@ public class SheetsLeaderBoards {
 
     private static Sheets sheetsService;
     private static String APPLICATION_NAME = "dunno";
-    private static String SPREADSHEET_ID;// = "1qHyr-Vnvm3_V0qbh2DLfD5lwYXCld1mMnWPYDPH47Ro";
+    private static String SPREADSHEET_ID;
     private static String CREDENTIALS_FILE_PATH;
-    private static PriorityQueue<Score> topTen;
-
+    private static String EZ_RANGE;
+    private static String HARD_RANGE;
+    private static PriorityQueue<Score> topTenEz;
+    private static PriorityQueue<Score> topTenHard;
+    
+    
+    
     private static Credential authorize() throws IOException, GeneralSecurityException {
 
-        //ClassLoader classloader = Thread.currentThread().getContextClassLoader();
-        //InputStream in = SheetsLeaderBoards.class.getResourceAsStream("/redentials.json");
         InputStream in = new FileInputStream("credentials.json");
-        //FileReader f = new FileReader("credentials.json");
-        //InputStream in = new FileInputStream("credentials.json");
 
         if (in == null) {
             throw new FileNotFoundException("Resource not found: " + CREDENTIALS_FILE_PATH);
@@ -101,6 +106,8 @@ public class SheetsLeaderBoards {
             prop.load(input);
 
             SPREADSHEET_ID = (prop.getProperty("SPREADSHEET_ID"));
+            EZ_RANGE = (prop.getProperty("EZ_RANGE"));
+            HARD_RANGE = (prop.getProperty("HARD_RANGE"));
 
         } catch (IOException ex) {
             ex.printStackTrace();
@@ -112,15 +119,28 @@ public class SheetsLeaderBoards {
     }
 
     public void leaderboardUpdate(String nimi, Score score) throws IOException, GeneralSecurityException, ParseException {
-        search();
-        topTen.add(new Score(nimi, score.time, score.round));
-        for (int i = 0; i < 10; i++) {
-            if (topTen.isEmpty()) {
-                return;
+        if (score.difficulty == 1) {
+            search(1);
+            topTenEz.add(new Score(nimi, score.time, score.round, score.points));
+            for (int i = 0; i < 10; i++) {
+                if (topTenEz.isEmpty()) {
+                    return;
+                }
+                Score pisteRivi = topTenEz.poll();
+                update(pisteRivi.nimi, pisteRivi, "B" + (i + 2));
             }
-            Score pisteRivi = topTen.poll();
-            update(pisteRivi.nimi, pisteRivi, "B" + (i + 2));
+        } else {
+            search(2);
+            topTenHard.add(new Score(nimi, score.time, score.round, score.points));
+            for (int i = 0; i < 10; i++) {
+                if (topTenHard.isEmpty()) {
+                    return;
+                }
+                Score pisteRivi = topTenHard.poll();
+                update(pisteRivi.nimi, pisteRivi, "G" + (i + 2));
+            }
         }
+
     }
 
     public static void add(String nimi, Score score) throws IOException, GeneralSecurityException {
@@ -145,7 +165,7 @@ public class SheetsLeaderBoards {
 
         ValueRange body = new ValueRange()
                 .setValues(Arrays.asList(
-                        Arrays.asList(nimi, score.time, score.round)
+                        Arrays.asList(nimi, score.time, score.round, score.points)
                 ));
 
         UpdateValuesResponse result = sheetsService.spreadsheets().values()
@@ -155,10 +175,24 @@ public class SheetsLeaderBoards {
 
     }
 
-    public PriorityQueue<Score> search() throws IOException, GeneralSecurityException, ParseException {
-        topTen = new PriorityQueue<>();
+    public PriorityQueue<Score> search(int difficulty) throws IOException, GeneralSecurityException, ParseException {
+        String range = "B2:E5";
         sheetsService = getSheetsService();
-        String range = "B2:D5";  //More?
+        PriorityQueue<Score> top5 = new PriorityQueue<>();
+        if (difficulty == 1) {
+            topTenEz = new PriorityQueue<>();
+            range = EZ_RANGE;
+            top5 = topTenEz;
+        } else {
+            topTenHard = new PriorityQueue<>();
+            range = HARD_RANGE;
+            top5 = topTenHard;
+        }
+        if (top5 == null) {
+            System.out.println("Error fetching scores..");
+            throw new NullPointerException();
+        }
+
         ValueRange response = sheetsService.spreadsheets().values()
                 .get(SPREADSHEET_ID, range)
                 .execute();
@@ -171,13 +205,52 @@ public class SheetsLeaderBoards {
                 String a = (String) row.get(0); //Nimi
                 String b = (String) row.get(1); //Aika
                 String c = (String) row.get(2); //Kierros
+                String d = (String) row.get(3); //Pisteet
 
                 double val = Double.parseDouble(b.replaceAll(",", ".")); //slightly scuffed
 
-                topTen.add(new Score((String) a, val, Integer.valueOf(c)));
+                top5.add(new Score((String) a, val, Integer.valueOf(c), Integer.valueOf(d)));
             }
         }
-        return topTen;
+
+        return top5;
+    }
+    
+    public VBox craftLeaderboard() throws IOException, GeneralSecurityException, ParseException {
+        //LEADERBOARD TABLE
+        VBox menuScores = new VBox();
+        Label normalLabel = new Label("LEADERBOARD (NORMAL)");
+        menuScores.getChildren().add(normalLabel);
+
+        PriorityQueue<Score> tmpr = search(1);
+        int ranking = 1;
+        if (tmpr.isEmpty()) {
+            menuScores.getChildren().add(new Text("No saved scores!"));
+        } else {
+            while (!tmpr.isEmpty()) {
+                menuScores.getChildren().add(new Text(ranking + ". " + tmpr.poll().toString()));
+                ranking++;
+            }
+        }
+        Label hardLabel = new Label("LEADERBOARD (HARD)");
+        menuScores.getChildren().add(hardLabel);
+
+        tmpr = search(2);
+        if (tmpr.isEmpty()) {
+            menuScores.getChildren().add(new Text("No saved scores!"));
+        } else {
+            ranking = 1;
+            while (!tmpr.isEmpty()) {
+                menuScores.getChildren().add(new Text(ranking + ". " + tmpr.poll().toString()));
+                ranking++;
+            }
+        }
+        Label info = new Label("Two scores on the same round are ranked by enemies killed that round");
+        info.setOpacity(0.8);
+        menuScores.getChildren().add(info);
+        menuScores.setAlignment(Pos.CENTER_RIGHT);
+        return menuScores;
+
     }
 
 }

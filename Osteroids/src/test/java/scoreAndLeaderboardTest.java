@@ -86,6 +86,13 @@ public class scoreAndLeaderboardTest {
         score2 = new Score(25.3, 3, 40, 2);
         assertEquals("Time: 25.3 seconds, round 3", score1.toStringNoName());
     }
+    @Test
+    public void scoreToStringFunctionsLastRound() {
+        score1 = new Score("nub", 25.3, 4, 40);
+        assertEquals("nub, Time: 25.3 seconds, Boss Defeated! ", score1.toString());
+        score2 = new Score(25.3, 4, 40, 2);
+        assertEquals("Time: 25.3 seconds, Boss Defeated! ", score1.toStringNoName());
+    }
     
     @Test
     public void ableToLoadConfigAndSearchLeaderboard() throws IOException, GeneralSecurityException, ParseException {
@@ -100,7 +107,7 @@ public class scoreAndLeaderboardTest {
     public void updateLeaderboardByAddingScoreThenRemoving() throws IOException, GeneralSecurityException, ParseException {
         hiScores.init();
         //ADD NEW BEST SCORE
-        hiScores.leaderboardUpdate("king", new Score(0, 4, 150, 5));
+        hiScores.leaderboardUpdateTest("king", new Score(0, 4, 150, 5));
         PriorityQueue<Score> q = hiScores.search(5);
         assertEquals(0, q.peek().getTime(), 0.01);
         

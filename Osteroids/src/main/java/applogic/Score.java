@@ -9,10 +9,10 @@ import java.util.Comparator;
 import ui.GUI;
 
 /**
+ * Class for scores.
  *
  * @author artkoski
  *
- * Class for scores
  *
  */
 public class Score implements Comparable<Score> {
@@ -24,12 +24,12 @@ public class Score implements Comparable<Score> {
     private int difficulty;
 
     /**
-     * Constructor used in GUI for scores during a session
+     * Constructor used in GUI for scores during a session.
      *
-     * @param time
-     * @param round
-     * @param points
-     * @param difficulty
+     * @param time - how long the round took
+     * @param round - which round the player got to
+     * @param points - points based on enemies killed
+     * @param difficulty - 1: normal, 2: hard
      */
     public Score(double time, int round, int points, int difficulty) {
         this.time = time;
@@ -39,13 +39,13 @@ public class Score implements Comparable<Score> {
     }
 
     /**
-     * Constructor used whenever a score is uploaded to or downloaded 
-     * from the leaderboards.
+     * Constructor used whenever a score is uploaded to or downloaded from the
+     * leaderboards.
      *
-     * @param name
-     * @param time
-     * @param round
-     * @param points
+     * @param name - nickname of the player
+     * @param time - how long the round took
+     * @param round - which round the player got to
+     * @param points - points based on enemies killed
      */
     public Score(String name, double time, int round, int points) {
         this.name = name;
@@ -82,7 +82,10 @@ public class Score implements Comparable<Score> {
             return name + ", Time: " + time + " seconds, Boss Defeated! ";
         }
     }
-
+/**
+ * toString when name is null.
+ * @return - toString with no name variable
+ */
     public String toStringNoName() {
         if (round < 4) {
             return "Time: " + time + " seconds, round " + round;

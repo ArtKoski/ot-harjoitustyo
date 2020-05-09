@@ -127,32 +127,29 @@ public class SpriteTest {
 
     }
 
-    /*
-    @Test
-    public void immunityWorksProper() {
-        double tmpr = sprite.getHealth();
-        sprite.immunityOn();
-        sprite.damage(3000);
-        sprite.immunityOff();
-        assertEquals(tmpr, sprite.getHealth());
-        assertTrue(sprite.getLiving());
-    }
-     */
-    @Test
-    public void spriteTriesToGoOB() {
-        int rotateKerroin = 1;
-        for (int i = 0; i < 10000; i++) {
+    public boolean spriteTriesToGoOB(int rotate) {
+
+        sprite.getPoly().setRotate(rotate);
+        for (int i = 0; i < 10; i++) {
             sprite.move();
-            sprite.accelerate(0.0005);
-            if (i % 2500 == 0) {
-                sprite.setMovement(new Point2D(0, 0));
-                sprite.getPoly().setRotate(90 * rotateKerroin);
-                rotateKerroin++;
-            }
-            assertTrue(sprite.getPoly().getTranslateX() <= 598 && sprite.getPoly().getTranslateX() >= 2); //check that the mfer is inbounds
-            assertTrue(sprite.getPoly().getTranslateY() <= 398 && sprite.getPoly().getTranslateY() >= 2);
+            sprite.accelerate(0.5);
+
+        }
+        if ((sprite.getPoly().getTranslateX() <= 599 && sprite.getPoly().getTranslateX() >= 1) && (sprite.getPoly().getTranslateY() <= 399 && sprite.getPoly().getTranslateY() >= 1)) {
+            return true;
+        } else {
+            return false;
         }
     }
+
+    @Test
+    public void spriteGoesOB() {
+        for (int i = 1; i < 361; i += 90) {
+            sprite.setMovement(new Point2D(0,0));
+            assertTrue(spriteTriesToGoOB(i));
+        }
+    }
+
     // TODO add test methods here.
     // The methods must be annotated with annotation @Test. For example:
     //

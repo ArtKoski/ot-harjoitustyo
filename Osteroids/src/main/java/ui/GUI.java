@@ -621,20 +621,13 @@ public class GUI extends Application {
         thing.scaleXProperty().bind(scale);
         thing.scaleYProperty().bind(scale);
 
-        Paint colourATM = thing.getFill();
-
-
         Timeline beat = new Timeline(
                 new KeyFrame(Duration.ZERO, event -> scale.setValue(value1)),
                 new KeyFrame(Duration.seconds(0.1), event -> scale.setValue(value2))
         );
-        if (scale.getValue() == value2) {
-            thing.setFill(Color.LIGHTPINK);
-        }
         beat.setAutoReverse(true);
         beat.setCycleCount(2);
         beat.play();
-        thing.setFill(colourATM);
 
         return true;
     }

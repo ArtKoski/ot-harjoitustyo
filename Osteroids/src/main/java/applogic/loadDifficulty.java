@@ -14,15 +14,18 @@ import java.util.Properties;
 
 /**
  *
- * @author artkoski
  * Loads the configuration file for the game settings.
+ *
+ * @author artkoski
  */
 public class loadDifficulty {
 
     private int difficulty;
     private ArrayList<Double> returnList;
+
     /**
      * Constructor defining which settings are to be loaded.
+     *
      * @param setting - 1: normal, 2: hard
      */
     public loadDifficulty(int setting) {
@@ -31,15 +34,15 @@ public class loadDifficulty {
     }
 
     /**
-     * Reads the configuration file and returns a list of values relevant to the difficulty setting.
-     * @return 
+     * Reads the configuration file and returns a list of values relevant to the
+     * difficulty setting.
+     *
+     * @return - the list of settings
      */
     public ArrayList<Double> difficultyConfig() {
         try (InputStream input = new FileInputStream("config.properties")) {
-
             Properties prop = new Properties();
             prop.load(input);
-
             if (difficulty == 1) {
                 returnList.add(Double.valueOf(prop.getProperty("patrolSpeed")));
                 returnList.add(Double.valueOf(prop.getProperty("bossAmmoFrequency")));
@@ -53,10 +56,8 @@ public class loadDifficulty {
                 returnList.add(Double.valueOf(prop.getProperty("extraAccelerationH")));
                 returnList.add(Double.valueOf(prop.getProperty("hpMultiplierH")));
             }
-
         } catch (IOException ex) {
             System.out.println("Problems with config..");
-            ex.printStackTrace();
         }
         return returnList;
     }

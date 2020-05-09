@@ -48,19 +48,20 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 
 /**
+ * Class responsible for the leaderboard functionality.
  *
- * @author artkoski Class responsible for the leaderboard functionality.
+ * @author artkoski
  *
  */
 public class SheetsLeaderBoards {
 
     private static Sheets sheetsService;
-    private static String APPLICATION_NAME = "dunno";
-    private static String SPREADSHEET_ID;
-    private static String CREDENTIALS_FILE_PATH;
-    private static String EZ_RANGE;
-    private static String HARD_RANGE;
-    private static String TEST_RANGE;
+    private static String applicationName = "dunno";
+    private static String spreadsheetID;
+    private static String credentialsFilePath;
+    private static String easyRange;
+    private static String hardRange;
+    private static String testRange;
     private static PriorityQueue<Score> topTenEz;
     private static PriorityQueue<Score> topTenHard;
     private static PriorityQueue<Score> topTenTest;
@@ -69,7 +70,7 @@ public class SheetsLeaderBoards {
 
         InputStream in = new FileInputStream("credentials.json");
         if (in == null) {
-            throw new FileNotFoundException("Resource not found: " + CREDENTIALS_FILE_PATH);
+            throw new FileNotFoundException("Resource not found: " + credentialsFilePath);
         }
         GoogleClientSecrets clientSecrets = GoogleClientSecrets.load(
                 JacksonFactory.getDefaultInstance(), new InputStreamReader(in)
@@ -93,7 +94,7 @@ public class SheetsLeaderBoards {
         Credential credential = authorize();
         return new Sheets.Builder(GoogleNetHttpTransport.newTrustedTransport(),
                 JacksonFactory.getDefaultInstance(), credential)
-                .setApplicationName(APPLICATION_NAME)
+                .setApplicationName(applicationName)
                 .build();
     }
 
@@ -107,19 +108,15 @@ public class SheetsLeaderBoards {
             Properties prop = new Properties();
             prop.load(input);
 
-            SPREADSHEET_ID = (prop.getProperty("SPREADSHEET_ID"));
-            EZ_RANGE = (prop.getProperty("EZ_RANGE"));
-            HARD_RANGE = (prop.getProperty("HARD_RANGE"));
-            TEST_RANGE = (prop.getProperty("TEST_RANGE"));
+            spreadsheetID = (prop.getProperty("SPREADSHEET_ID"));
+            easyRange = (prop.getProperty("EZ_RANGE"));
+            hardRange = (prop.getProperty("HARD_RANGE"));
+            testRange = (prop.getProperty("TEST_RANGE"));
 
         } catch (IOException ex) {
             System.out.println("Error loading config..");
             ex.printStackTrace();
         }
-    }
-
-    public static void main(String[] args) throws IOException, GeneralSecurityException {
-
     }
 
     /**
@@ -130,9 +127,9 @@ public class SheetsLeaderBoards {
      *
      * @param name - Nickname given by the player
      * @param score - The score to be added to the leaderboards
-     * @throws IOException
-     * @throws GeneralSecurityException
-     * @throws ParseException
+     * @throws IOException - if credentials cant be found/accessed
+     * @throws GeneralSecurityException - authorization problem
+     * @throws ParseException - number formatting problem
      */
     public void leaderboardUpdate(String name, Score score) throws IOException, GeneralSecurityException, ParseException {
         if (score.getDifficulty() == 1) {
@@ -155,28 +152,38 @@ public class SheetsLeaderBoards {
                 Score pisteRivi = topTenHard.poll();
                 update(pisteRivi.getName(), pisteRivi, "G" + (i + 2));
             }
-        } else {
-            search(5);
-            topTenTest.add(new Score(name, score.getTime(), score.getRound(), score.getPoints()));
-            for (int i = 0; i < 10; i++) {
-                if (topTenTest.isEmpty()) {
-                    return;
-                }
-                Score pisteRivi = topTenTest.poll();
-                update(pisteRivi.getName(), pisteRivi, "M" + (i + 2));
-            }
         }
-
     }
 
     /**
-     * Update a specific row on the leaderboards
+     * Same as above but for testing ranges in the spreadsheet.
      *
-     * @param name
-     * @param score
-     * @param paivitettavaKohta
-     * @throws IOException
-     * @throws GeneralSecurityException
+     * @param name - Nickname given by the player
+     * @param score - The score to be added to the leaderboards
+     * @throws IOException - if credentials cant be found/accessed
+     * @throws GeneralSecurityException - authorization problem
+     * @throws ParseException - number formatting problem
+     */
+    public void leaderboardUpdateTest(String name, Score score) throws IOException, GeneralSecurityException, ParseException {
+        search(5);
+        topTenTest.add(new Score(name, score.getTime(), score.getRound(), score.getPoints()));
+        for (int i = 0; i < 10; i++) {
+            if (topTenTest.isEmpty()) {
+                return;
+            }
+            Score pisteRivi = topTenTest.poll();
+            update(pisteRivi.getName(), pisteRivi, "M" + (i + 2));
+        }
+    }
+
+    /**
+     * Update a specific row on the leaderboards.
+     *
+     * @param name - Nickname given by the player
+     * @param score - The score to be added to the leaderboards
+     * @param paivitettavaKohta - the specified row to be updated
+     * @throws IOException - if credentials cant be found/accessed
+     * @throws GeneralSecurityException - authorization problem
      */
     public static void update(String name, Score score, String paivitettavaKohta) throws IOException, GeneralSecurityException {
         sheetsService = getSheetsService();
@@ -187,7 +194,7 @@ public class SheetsLeaderBoards {
                 ));
 
         UpdateValuesResponse result = sheetsService.spreadsheets().values()
-                .update(SPREADSHEET_ID, paivitettavaKohta, body)
+                .update(spreadsheetID, paivitettavaKohta, body)
                 .setValueInputOption("RAW")
                 .execute();
 
@@ -198,9 +205,9 @@ public class SheetsLeaderBoards {
      *
      * @param difficulty - 1: normal, 2: hard, 3: Test
      * @return - Returns a PriorityQueue with values from the specified range
-     * @throws IOException
-     * @throws GeneralSecurityException
-     * @throws ParseException
+     * @throws IOException - if credentials cant be found/accessed
+     * @throws GeneralSecurityException - authorization problem
+     * @throws ParseException - number formatting problem
      */
     public PriorityQueue<Score> search(int difficulty) throws IOException, GeneralSecurityException, ParseException {
         String range = "B2:E5";
@@ -208,15 +215,15 @@ public class SheetsLeaderBoards {
         PriorityQueue<Score> top5 = new PriorityQueue<>();
         if (difficulty == 1) {
             topTenEz = new PriorityQueue<>();
-            range = EZ_RANGE;
+            range = easyRange;
             top5 = topTenEz;
         } else if (difficulty == 2) {
             topTenHard = new PriorityQueue<>();
-            range = HARD_RANGE;
+            range = hardRange;
             top5 = topTenHard;
         } else {
             topTenTest = new PriorityQueue<>();
-            range = TEST_RANGE;
+            range = testRange;
             top5 = topTenTest;
         }
         if (top5 == null) {
@@ -224,7 +231,7 @@ public class SheetsLeaderBoards {
         }
 
         ValueRange response = sheetsService.spreadsheets().values()
-                .get(SPREADSHEET_ID, range)
+                .get(spreadsheetID, range)
                 .execute();
         List<List<Object>> values = response.getValues();
 
@@ -245,13 +252,15 @@ public class SheetsLeaderBoards {
 
         return top5;
     }
+
     /**
-     * Searches the spreadsheet for both normal and hard difficulty data and builds a JavaFX component
-     * out of it. 
+     * Searches the spreadsheet for both normal and hard difficulty data and
+     * builds a JavaFX component out of it.
+     *
      * @return - VBox JavaFX component
-     * @throws IOException
-     * @throws GeneralSecurityException
-     * @throws ParseException 
+     * @throws IOException - if credentials cant be found/accessed
+     * @throws GeneralSecurityException - authorization problem
+     * @throws ParseException - number formatting problem
      */
     public VBox craftLeaderboard() throws IOException, GeneralSecurityException, ParseException {
         //LEADERBOARD TABLE

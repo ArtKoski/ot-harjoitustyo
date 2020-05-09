@@ -25,7 +25,7 @@ public class Hero extends Sprite {
      *
      * @param x - spawn coordinate x
      * @param y - spawn coordinate y
-     * @hp - amount of health
+     * @param hp - amount of health
      */
     public Hero(int x, int y, double hp) {
         super(new Polygon(-5, -5, 10, 0, -5, 5), x, y, hp);

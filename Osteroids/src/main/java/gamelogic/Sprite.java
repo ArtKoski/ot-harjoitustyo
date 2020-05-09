@@ -60,35 +60,6 @@ public abstract class Sprite {
     }
 
     /**
-     * Grants the sprite immunity to damage.
-     * <p>
-     * health is temporarily set to a high amount and returns to normal whenever
-     * the counterpart method immunityOff() is called.
-     * </p>
-     */
-    public void immunityOn() {
-        tmpr = health;
-        health = 10_000;
-        spritePolygon.setFill(Color.CORAL);
-        spritePolygon.setOpacity(80);
-    }
-
-    /**
-     * Turns off immunity.
-     * <p>
-     * Health set back to amount before immunity.
-     * </p>
-     */
-    public void immunityOff() {
-        health = tmpr;
-        spritePolygon.setOpacity(100);
-        updateColour();
-    }
-
-    void hitColour() { //CHECK FUNCTIONALITY
-    }
-
-    /**
      * Updates colour based on HP.
      */
     void updateColour() {
@@ -255,7 +226,6 @@ public abstract class Sprite {
     public boolean damage(double x) {
         this.health -= x;
 
-        hitColour();
         updateColour();
         if (this.health <= 0) {
             this.die();

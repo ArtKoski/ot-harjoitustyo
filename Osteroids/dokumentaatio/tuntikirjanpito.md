@@ -29,6 +29,6 @@
 |	|	|muuttaminen(normal,hard)
 |8.5	|7	|bugien fixailu, logiikan erottelu 	|
 |	|	|UI-toiminnoista, hienosäätöä		|	
+|9.5	|7	|viimeistelyä:javadoc,checkstyle,testit	|	
 
-
-|	|=53	|
+|	|=60	|

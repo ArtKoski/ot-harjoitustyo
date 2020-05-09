@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package scores;
+package applogic;
 
 import com.google.api.client.auth.oauth2.Credential;
 import com.google.api.client.extensions.java6.auth.oauth2.AuthorizationCodeInstalledApp;
@@ -46,12 +46,11 @@ import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
-import org.json.simple.JSONArray;
-import org.json.simple.parser.JSONParser;
 
 /**
  *
- * @author artkoski
+ * @author artkoski Class responsible for the leaderboard functionality.
+ *
  */
 public class SheetsLeaderBoards {
 
@@ -61,15 +60,14 @@ public class SheetsLeaderBoards {
     private static String CREDENTIALS_FILE_PATH;
     private static String EZ_RANGE;
     private static String HARD_RANGE;
+    private static String TEST_RANGE;
     private static PriorityQueue<Score> topTenEz;
     private static PriorityQueue<Score> topTenHard;
-    
-    
-    
+    private static PriorityQueue<Score> topTenTest;
+
     private static Credential authorize() throws IOException, GeneralSecurityException {
 
         InputStream in = new FileInputStream("credentials.json");
-
         if (in == null) {
             throw new FileNotFoundException("Resource not found: " + CREDENTIALS_FILE_PATH);
         }
@@ -91,7 +89,7 @@ public class SheetsLeaderBoards {
         return credential;
     }
 
-    public static Sheets getSheetsService() throws IOException, GeneralSecurityException {
+    private static Sheets getSheetsService() throws IOException, GeneralSecurityException {
         Credential credential = authorize();
         return new Sheets.Builder(GoogleNetHttpTransport.newTrustedTransport(),
                 JacksonFactory.getDefaultInstance(), credential)
@@ -99,6 +97,10 @@ public class SheetsLeaderBoards {
                 .build();
     }
 
+    /**
+     * Class for loading essential values from config.properties to variables.
+     * Needs to be executed before attempting to read or write from database.
+     */
     public void init() {
         try (InputStream input = new FileInputStream("config.properties")) {
 
@@ -108,8 +110,10 @@ public class SheetsLeaderBoards {
             SPREADSHEET_ID = (prop.getProperty("SPREADSHEET_ID"));
             EZ_RANGE = (prop.getProperty("EZ_RANGE"));
             HARD_RANGE = (prop.getProperty("HARD_RANGE"));
+            TEST_RANGE = (prop.getProperty("TEST_RANGE"));
 
         } catch (IOException ex) {
+            System.out.println("Error loading config..");
             ex.printStackTrace();
         }
     }
@@ -118,54 +122,68 @@ public class SheetsLeaderBoards {
 
     }
 
-    public void leaderboardUpdate(String nimi, Score score) throws IOException, GeneralSecurityException, ParseException {
-        if (score.difficulty == 1) {
+    /**
+     * Searches the leaderboards for old scores and adds them into a
+     * PriorityList, then adds the given Score in the parameters in the list as
+     * well and updates the leaderboards. Two different tables exist for each
+     * difficulty.
+     *
+     * @param name - Nickname given by the player
+     * @param score - The score to be added to the leaderboards
+     * @throws IOException
+     * @throws GeneralSecurityException
+     * @throws ParseException
+     */
+    public void leaderboardUpdate(String name, Score score) throws IOException, GeneralSecurityException, ParseException {
+        if (score.getDifficulty() == 1) {
             search(1);
-            topTenEz.add(new Score(nimi, score.time, score.round, score.points));
+            topTenEz.add(new Score(name, score.getTime(), score.getRound(), score.getPoints()));
             for (int i = 0; i < 10; i++) {
                 if (topTenEz.isEmpty()) {
                     return;
                 }
                 Score pisteRivi = topTenEz.poll();
-                update(pisteRivi.nimi, pisteRivi, "B" + (i + 2));
+                update(pisteRivi.getName(), pisteRivi, "B" + (i + 2));
             }
-        } else {
+        } else if (score.getDifficulty() == 2) {
             search(2);
-            topTenHard.add(new Score(nimi, score.time, score.round, score.points));
+            topTenHard.add(new Score(name, score.getTime(), score.getRound(), score.getPoints()));
             for (int i = 0; i < 10; i++) {
                 if (topTenHard.isEmpty()) {
                     return;
                 }
                 Score pisteRivi = topTenHard.poll();
-                update(pisteRivi.nimi, pisteRivi, "G" + (i + 2));
+                update(pisteRivi.getName(), pisteRivi, "G" + (i + 2));
+            }
+        } else {
+            search(5);
+            topTenTest.add(new Score(name, score.getTime(), score.getRound(), score.getPoints()));
+            for (int i = 0; i < 10; i++) {
+                if (topTenTest.isEmpty()) {
+                    return;
+                }
+                Score pisteRivi = topTenTest.poll();
+                update(pisteRivi.getName(), pisteRivi, "M" + (i + 2));
             }
         }
 
     }
 
-    public static void add(String nimi, Score score) throws IOException, GeneralSecurityException {
+    /**
+     * Update a specific row on the leaderboards
+     *
+     * @param name
+     * @param score
+     * @param paivitettavaKohta
+     * @throws IOException
+     * @throws GeneralSecurityException
+     */
+    public static void update(String name, Score score, String paivitettavaKohta) throws IOException, GeneralSecurityException {
         sheetsService = getSheetsService();
 
         ValueRange body = new ValueRange()
                 .setValues(Arrays.asList(
-                        Arrays.asList(nimi, score.round, score.time)
-                ));
-
-        AppendValuesResponse appendResult = sheetsService.spreadsheets().values()
-                .append(SPREADSHEET_ID, "B2", body)
-                .setValueInputOption("USER_ENTERED")
-                .setInsertDataOption("INSERT_ROWS")
-                .setIncludeValuesInResponse(Boolean.TRUE)
-                .execute();
-
-    }
-
-    public static void update(String nimi, Score score, String paivitettavaKohta) throws IOException, GeneralSecurityException {
-        sheetsService = getSheetsService();
-
-        ValueRange body = new ValueRange()
-                .setValues(Arrays.asList(
-                        Arrays.asList(nimi, score.time, score.round, score.points)
+                        Arrays.asList(name, score.getTime(), score.getRound(), score.getPoints())
                 ));
 
         UpdateValuesResponse result = sheetsService.spreadsheets().values()
@@ -175,6 +193,15 @@ public class SheetsLeaderBoards {
 
     }
 
+    /**
+     * Searches a range on the spreadsheet relevant to the difficulty parameter.
+     *
+     * @param difficulty - 1: normal, 2: hard, 3: Test
+     * @return - Returns a PriorityQueue with values from the specified range
+     * @throws IOException
+     * @throws GeneralSecurityException
+     * @throws ParseException
+     */
     public PriorityQueue<Score> search(int difficulty) throws IOException, GeneralSecurityException, ParseException {
         String range = "B2:E5";
         sheetsService = getSheetsService();
@@ -183,14 +210,17 @@ public class SheetsLeaderBoards {
             topTenEz = new PriorityQueue<>();
             range = EZ_RANGE;
             top5 = topTenEz;
-        } else {
+        } else if (difficulty == 2) {
             topTenHard = new PriorityQueue<>();
             range = HARD_RANGE;
             top5 = topTenHard;
+        } else {
+            topTenTest = new PriorityQueue<>();
+            range = TEST_RANGE;
+            top5 = topTenTest;
         }
         if (top5 == null) {
             System.out.println("Error fetching scores..");
-            throw new NullPointerException();
         }
 
         ValueRange response = sheetsService.spreadsheets().values()
@@ -199,7 +229,7 @@ public class SheetsLeaderBoards {
         List<List<Object>> values = response.getValues();
 
         if (values == null || values.isEmpty()) {
-            System.out.println("No saved scores!");
+            return top5;
         } else {
             for (List row : values) {
                 String a = (String) row.get(0); //Nimi
@@ -215,7 +245,14 @@ public class SheetsLeaderBoards {
 
         return top5;
     }
-    
+    /**
+     * Searches the spreadsheet for both normal and hard difficulty data and builds a JavaFX component
+     * out of it. 
+     * @return - VBox JavaFX component
+     * @throws IOException
+     * @throws GeneralSecurityException
+     * @throws ParseException 
+     */
     public VBox craftLeaderboard() throws IOException, GeneralSecurityException, ParseException {
         //LEADERBOARD TABLE
         VBox menuScores = new VBox();

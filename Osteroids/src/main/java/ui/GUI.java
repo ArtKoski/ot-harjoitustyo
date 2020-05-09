@@ -5,14 +5,13 @@
  */
 package ui;
 
+import applogic.loadDifficulty;
+import applogic.Score;
+import applogic.SheetsLeaderBoards;
 import gamelogic.*;
-import java.awt.Font;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.security.GeneralSecurityException;
 import java.text.ParseException;
-import scores.*;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -27,23 +26,20 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.Pane;
-import javafx.scene.paint.Color;
 import javafx.scene.shape.Polygon;
-import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Group;
 import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
-import javafx.scene.control.ToggleButton;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.scene.shape.Shape;
+import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
 import javafx.scene.text.TextAlignment;
 
 /**
@@ -52,34 +48,33 @@ import javafx.scene.text.TextAlignment;
  */
 public class GUI extends Application {
 
-    SheetsLeaderBoards hiScores;
+    private SheetsLeaderBoards hiScores;
     public static int LEVEYS = 600;
     public static int KORKEUS = 400;
     private Scene peliNakyma;
     private Scene alkuNakyma;
     private Scene gameOverScene;
     private Scene instructionsScene;
-    Pane peliRuutu;
-    List<Bullet> ammo = new ArrayList<>();
-    List<Bullet> enemyAmmo = new ArrayList<>();
-    List<Sprite> enemies = new ArrayList<>();
-    Button startGameFromTut;
-    int round = 0;
-    Hero hero;
-    int score = 0;
-    long timer;
-    boolean cooldown = false;
-    long cdTimer = 0;
-    boolean cleared;
-    long roundTimerStart;
-    long roundTimerEnd;
-    Label gameOverLabel = new Label();
-    Text roundATM = new Text();
-    Text scoreText = new Text();
-    double multiplier = 1;
-    int difficulty;
-
-    final PriorityQueue<Score> bestTimes = new PriorityQueue<Score>();
+    private Pane peliRuutu;
+    private List<Bullet> ammo = new ArrayList<>();
+    private List<Bullet> enemyAmmo = new ArrayList<>();
+    private List<Sprite> enemies = new ArrayList<>();
+    private Button startGameFromTut;
+    private int round = 0;
+    private Hero hero;
+    private int score = 0;
+    private long timer;
+    private boolean cooldown = false;
+    private long cdTimer = 0;
+    private boolean cleared;
+    private long roundTimerStart;
+    private long roundTimerEnd;
+    private Label gameOverLabel = new Label();
+    private Text roundATM = new Text();
+    private Text scoreText = new Text();
+    private double multiplier = 1;
+    private int difficulty;
+    private final PriorityQueue<Score> bestTimes = new PriorityQueue<Score>();
 
     public static void main(String[] args) {
         launch(args);
@@ -98,6 +93,10 @@ public class GUI extends Application {
     }
 
     public void startGame(Stage ikkuna, int setting) {
+
+        peliRuutu = new Pane();
+        peliRuutu.setPrefSize(LEVEYS, KORKEUS);
+        peliNakyma = new Scene(peliRuutu);
         //Difficulty, atm 1 or 2 (normal, hard)
         difficulty = setting;
         loadDifficulty loadSettings = new loadDifficulty(setting);
@@ -110,9 +109,6 @@ public class GUI extends Application {
 
         Random random = new Random();
 
-        peliRuutu = new Pane();
-        peliRuutu.setPrefSize(LEVEYS, KORKEUS);
-
         //ADD HERO
         hero = new Hero(150, 100, 800);
         peliRuutu.getChildren().add(hero.getPoly());
@@ -120,8 +116,6 @@ public class GUI extends Application {
         //Start Game (tutorial round) 
         roundTimerStart = System.nanoTime();
         roundZero(peliRuutu);
-
-        peliNakyma = new Scene(peliRuutu);
 
         Map<KeyCode, Boolean> painetutNapit = new HashMap<>();
         peliNakyma.setOnKeyPressed(event -> {
@@ -178,7 +172,7 @@ public class GUI extends Application {
                 if (painetutNapit.getOrDefault(KeyCode.X, false) && ammo.size() < 2) {
                     Bullet shot = new Bullet((int) hero.getPoly().getTranslateX(), (int) hero.getPoly().getTranslateY());
 
-                    shot.getPoly().setRotate(hero.spritePolygon.getRotate());
+                    shot.getPoly().setRotate(hero.getPoly().getRotate());
                     ammo.add(shot);
 
                     shot.accelerate(0.0005);
@@ -205,13 +199,6 @@ public class GUI extends Application {
 
                 //BOSS THINGIES
                 if (enemies.get(0).getClass() == EnemySpecial.class) {
-                    if (enemies.get(0).getHealthPercentage() < 0.75) {
-
-                    } else if (enemies.get(0).getHealthPercentage() < 0.5) {
-
-                    } else if (enemies.get(0).getHealthPercentage() < 0.25) {
-
-                    }
 
                     if (nykyhetki % bossAmmoFrequency == 0) {
 
@@ -271,11 +258,11 @@ public class GUI extends Application {
                     enemies.forEach(enemy -> {
                         if (shot.intersect(enemy)) {
                             shot.setLiving(false);
-                            animateUsingTimeline(enemy.spritePolygon, 1.0, 1.4);
-                            if (enemy.damage(400)) { // og 40
+                            animateUsingTimeline(enemy.getPoly(), 1.0, 1.4);
+                            if (enemy.damage(40)) { // og 40
                                 score += 10;
                                 scoreText.setText("Points: " + score);
-                                peliRuutu.getChildren().remove(enemy.spritePolygon);
+                                peliRuutu.getChildren().remove(enemy.getPoly());
                             }
                             if (enemy.getClass() == EnemySpecial.class) {
                                 //jotain kivaa?
@@ -322,7 +309,7 @@ public class GUI extends Application {
                         .collect(Collectors.toList()));
 
                 //HERO DEAD
-                if (!hero.alive) {
+                if (!hero.getLiving()) {
 
                     painetutNapit.clear();
                     gameEndScore("FAILURE");
@@ -377,7 +364,7 @@ public class GUI extends Application {
             peliRuutu.getChildren().remove(hero.getPoly());
         }
         enemies.stream().map((e) -> {
-            e.alive = false;
+            e.setLiving(false);
             return e;
         }).forEachOrdered((e) -> {
             peliRuutu.getChildren().remove(e.getPoly());
@@ -385,7 +372,7 @@ public class GUI extends Application {
         enemies.clear();
 
         enemyAmmo.stream().map((e) -> {
-            e.alive = false;
+            e.setLiving(false);
             return e;
         }).forEachOrdered((e) -> {
             peliRuutu.getChildren().remove(e.getPoly());
@@ -393,99 +380,6 @@ public class GUI extends Application {
 
         enemyAmmo.clear();
 
-    }
-
-    void restart(Stage ikkuna) { //kinda useless ?
-        ikkuna.setScene(alkuNakyma);
-    }
-
-    void scoreSaveStage(Stage ikkuna) {
-
-        BorderPane nameSetLayout = new BorderPane();
-        nameSetLayout.setPrefSize(250, 200);
-        VBox menu = new VBox();
-        menu.setPadding(new Insets(20, 20, 20, 20));
-        menu.setSpacing(10);
-        Label l = new Label("NAME:");
-        TextField tf = new TextField();
-        Button saveButton = new Button("SAVE BEST SCORE");
-        menu.getChildren().addAll(l, tf, saveButton);
-        menu.setAlignment(Pos.CENTER);
-        nameSetLayout.setCenter(menu);
-
-        saveButton.setOnAction(click -> {
-            if (tf.getLength() < 2) {
-                nameSetLayout.getChildren().add(new Label("Minimum 2 characters!"));
-            } else {
-                try {
-                    hiScores.leaderboardUpdate(tf.getText(), bestTimes.poll());
-
-                    leaderboardsStage(ikkuna);
-                } catch (IOException ex) {
-                    System.out.println("Problems with updating leaderboards..");
-                } catch (GeneralSecurityException ex) {
-                    System.out.println("Problems with updating leaderboards..");
-                } catch (ParseException ex) {
-                    System.out.println("Problems with updating leaderboards..");
-                }
-            }
-        });
-
-        Scene nameScene = new Scene(nameSetLayout);
-        ikkuna.setScene(nameScene);
-
-    }
-
-    void leaderboardsStage(Stage ikkuna) throws IOException, GeneralSecurityException, ParseException {
-
-        BorderPane lbLayout = new BorderPane();
-        lbLayout.setPrefSize(LEVEYS, KORKEUS);
-        VBox menu = new VBox();
-        //VBox menuScores = new VBox();
-        menu.setPadding(new Insets(20, 20, 20, 20));
-        menu.setSpacing(10);
-
-        Button tryAgainButton = new Button("MENU");
-        Button exitButton = new Button("EXIT");
-        Button saveScoreFromGameOverButton = new Button("SAVE BEST SCORE");
-        saveScoreFromGameOverButton.setMinWidth(150);
-
-        menu.getChildren().addAll(tryAgainButton, saveScoreFromGameOverButton, exitButton);
-        menu.setAlignment(Pos.CENTER_LEFT);
-        lbLayout.setCenter(menu);
-        lbLayout.setRight(hiScores.craftLeaderboard());
-
-        tryAgainButton.setOnAction(click -> {
-            restart(ikkuna);
-        });
-
-        saveScoreFromGameOverButton.setOnAction(click -> {
-            scoreSaveStage(ikkuna);
-        });
-
-        exitButton.setOnAction(click -> {
-            ikkuna.close();
-        });
-
-        Scene leaderboardScene = new Scene(lbLayout);
-        ikkuna.setScene(leaderboardScene);
-
-    }
-
-    void gameEndScore(String WorL) {
-        roundTimerEnd = System.nanoTime();
-        double time = (Math.round((roundTimerEnd - roundTimerStart) / 1e9 * 100.0)) / 100.0;
-        Score newScore = new Score(time, round, score, difficulty);
-        bestTimes.add(newScore);
-
-        if (bestTimes.peek().equals(newScore)) {
-            gameOverLabel.setText(WorL
-                    + "\nNew Session Best! \n" + bestTimes.peek().toStringNoName());
-
-        } else {
-            gameOverLabel.setText(WorL + " \nTime: " + time + ", round: " + round
-                    + "\nSession Best: " + bestTimes.peek().toStringNoName());
-        }
     }
 
     void mainScreenStage(Stage ikkuna) {
@@ -569,7 +463,8 @@ public class GUI extends Application {
         instructionsMenu.setPadding(new Insets(20, 20, 20, 20));
         instructionsMenu.setSpacing(10);
 
-        Label instructionsLabel = new Label("CONTROLS: \nArrow keys to move\nSHIFT+Arrow keys to slow down\nX to shoot\nE for immunity(disabled atm)\nGoal: spaceship go brrt");  //TÄHÄN KIVEMPI TEXT
+        Label instructionsLabel = new Label("CONTROLS: \nArrow keys to move\nSHIFT+Arrow keys to slow down\nX to shoot\nGoal: Destroy the enemies as fast as you can.");  //TÄHÄN KIVEMPI TEXT
+        instructionsLabel.setTextAlignment(TextAlignment.CENTER);
         startGameFromTut = new Button("Main Menu");
         instructionsMenu.getChildren().addAll(instructionsLabel, startGameFromTut);
         instructionsMenu.setAlignment(Pos.CENTER);
@@ -596,7 +491,7 @@ public class GUI extends Application {
 
         tryAgainButton.setOnAction(click -> {
             resetRound(peliRuutu);
-            restart(ikkuna);
+            ikkuna.setScene(alkuNakyma);
         });
 
         exitButton.setOnAction(click -> {
@@ -624,19 +519,123 @@ public class GUI extends Application {
 
     }
 
+    void scoreSaveStage(Stage ikkuna) {
+
+        BorderPane nameSetLayout = new BorderPane();
+        nameSetLayout.setPrefSize(250, 200);
+        VBox menu = new VBox();
+        menu.setPadding(new Insets(20, 20, 20, 20));
+        menu.setSpacing(10);
+        Label l = new Label("NAME:");
+        Label wrongInput = new Label("");
+        TextField tf = new TextField();
+        Button saveButton = new Button("SAVE BEST SCORE");
+        Text infoText = new Text("Score to be saved: " + bestTimes.peek().toStringNoName());
+        menu.getChildren().addAll(l, tf, saveButton, wrongInput, infoText);
+        menu.setAlignment(Pos.CENTER);
+        nameSetLayout.setCenter(menu);
+
+        saveButton.setOnAction(click -> {
+            if (tf.getLength() < 2 || tf.getLength() > 10) {
+                wrongInput.setText("NAME BETWEEN 2 AND 8 CHARACTERS");
+            } else {
+                try {
+                    hiScores.leaderboardUpdate(tf.getText(), bestTimes.poll());
+
+                    leaderboardsStage(ikkuna);
+                } catch (IOException ex) {
+                    System.out.println("Problems with updating leaderboards..");
+                } catch (GeneralSecurityException ex) {
+                    System.out.println("Problems with updating leaderboards..");
+                } catch (ParseException ex) {
+                    System.out.println("Problems with updating leaderboards..");
+                }
+            }
+        });
+
+        Scene nameScene = new Scene(nameSetLayout);
+        ikkuna.setScene(nameScene);
+
+    }
+
+    void leaderboardsStage(Stage ikkuna) throws IOException, GeneralSecurityException, ParseException {
+
+        BorderPane lbLayout = new BorderPane();
+        lbLayout.setPrefSize(LEVEYS, KORKEUS);
+        VBox menu = new VBox();
+        menu.setPadding(new Insets(20, 20, 20, 20));
+        menu.setSpacing(10);
+
+        Button tryAgainButton = new Button("MENU");
+        Button exitButton = new Button("EXIT");
+        Button saveScoreFromGameOverButton = new Button("SAVE BEST SCORE");
+        saveScoreFromGameOverButton.setMinWidth(150);
+        Text alreadySavedText = new Text("");
+
+        menu.getChildren().addAll(tryAgainButton, saveScoreFromGameOverButton, exitButton);
+        menu.setAlignment(Pos.CENTER_LEFT);
+        lbLayout.setCenter(menu);
+        lbLayout.setRight(hiScores.craftLeaderboard());
+        lbLayout.setBottom(alreadySavedText);
+
+        tryAgainButton.setOnAction(click -> {
+            ikkuna.setScene(alkuNakyma);
+        });
+
+        saveScoreFromGameOverButton.setOnAction(click -> {
+            if (bestTimes.isEmpty()) {
+                alreadySavedText.setText("There are no scores to save.");
+            } else {
+                scoreSaveStage(ikkuna);
+            }
+        });
+
+        exitButton.setOnAction(click -> {
+            ikkuna.close();
+        });
+
+        Scene leaderboardScene = new Scene(lbLayout);
+        ikkuna.setScene(leaderboardScene);
+
+    }
+
+    void gameEndScore(String WorL) {
+        roundTimerEnd = System.nanoTime();
+        double time = (Math.round((roundTimerEnd - roundTimerStart) / 1e9 * 100.0)) / 100.0;
+        Score newScore = new Score(time, round, score, difficulty);
+        bestTimes.add(newScore);
+
+        if (bestTimes.peek().equals(newScore)) {
+            gameOverLabel.setText(WorL
+                    + "\nNew Session Best! \n" + bestTimes.peek().toStringNoName());
+
+        } else {
+            gameOverLabel.setText(WorL + " \nTime: " + time + ", round: " + round
+                    + "\nSession Best: " + bestTimes.peek().toStringNoName());
+        }
+    }
+
     //HIT ANIMATION
     private boolean animateUsingTimeline(Polygon thing, double value1, double value2) {
         DoubleProperty scale = new SimpleDoubleProperty(1);
         thing.scaleXProperty().bind(scale);
         thing.scaleYProperty().bind(scale);
 
+        Paint colourATM = thing.getFill();
+
+
         Timeline beat = new Timeline(
                 new KeyFrame(Duration.ZERO, event -> scale.setValue(value1)),
                 new KeyFrame(Duration.seconds(0.1), event -> scale.setValue(value2))
         );
+        if (scale.getValue() == value2) {
+            thing.setFill(Color.LIGHTPINK);
+        }
         beat.setAutoReverse(true);
         beat.setCycleCount(2);
         beat.play();
+        thing.setFill(colourATM);
+
         return true;
     }
 
@@ -650,7 +649,7 @@ public class GUI extends Application {
         roundATM.setText("Tutorial");
         scoreText.setText("Points: " + score);
         BorderPane roundsPane = new BorderPane();
-        roundsPane.setPadding(new Insets(40, 40, 40, 40));
+        roundsPane.setPadding(new Insets(20, 20, 20, 20));
         roundsPane.setLeft(roundATM); //FIX THIS
         roundsPane.setRight(scoreText);
         peliRuutu.getChildren().add(roundsPane);
@@ -665,7 +664,7 @@ public class GUI extends Application {
     void round1(Pane pane) {
         for (int i = 0; i < 2; i++) {
             enemies.add(new Enemy1(300 / (i + 1), 150 / (i + 1), 400 * multiplier));
-            pane.getChildren().add(enemies.get(i).spritePolygon);
+            pane.getChildren().add(enemies.get(i).getPoly());
         }
         cleared = false;
     }
@@ -673,14 +672,14 @@ public class GUI extends Application {
     void round2(Pane pane) {
 
         enemies.add(new Enemy2(300, 150, 2000 * multiplier));
-        pane.getChildren().add(enemies.get(0).spritePolygon);
+        pane.getChildren().add(enemies.get(0).getPoly());
         cleared = false;
     }
 
     void round3Boss(Pane pane) {
         enemies.add(new EnemySpecial(300, 2, 5000 * multiplier));
         enemies.get(0).getPoly().setRotate(-45);
-        pane.getChildren().add(enemies.get(0).spritePolygon);
+        pane.getChildren().add(enemies.get(0).getPoly());
         cleared = false;
     }
 

@@ -1,34 +1,36 @@
 # *Vaatimusmäärittely*
 
 ## *Sovelluksen tarkoitus*
-Sovellus on pienimuotoinen Asteroids-tyyppinen peli, jossa tarkoitus on selvitä
-ja kerätä pisteitä.
+Sovellus on pienimuotoinen Asteroids-tyyppinen peli, jossa tarkoitus on selvitä vihollisaalloista mahdollisimman nopeasti.
 
-## *Käyttäjät*
-1. Peruskäyttäjä
-(2.) Admin/GodMode? Ei prioriteetti. [Immunity-ominaisuus työn alla]
+## *Käyttäjät
+Pelkästään peruskäyttäjä.
+('GodMode' SCRAPPED)
 
 ## *Käyttöliittymä*
-1a) Sisäänkirjautuminen käyttäjälle, jonka jälkeen pääsee peliin\
-1b) Ei sisäänkirjautumista, mutta pelin päätyttyä nimen ja pisteiden tallennus
 
-Näkymiä yhteensä ainakin: 1. Alkuskene, (2. Tunnuksen tekeminen), 3. Peliskene  4. Voitto/Häviö-scene 5. Pistetulokset
+Sovelluksen näkymät:
+1.) Alkuskene
+1.5) Instructions-skene
+2.) Peliskene  
+3.) Voitto/Häviö-scene 
+4.) Leaderboards-skene sekä tallennusmahdollisuus "save-scene"
 
 ## *Perusversion toiminnallisuus*
-~~_Ennen kirjautumista_-Käyttäjätunnuksen luonti\-Sisäänkirjautuminen~~ [scrapped]
 
--Start-nappula josta peliin\
--Pelin päätyttyä kysytään nimeä, joka voidaan sitten tallentaa halutulla tavalla
+-~~Start-nappula josta peliin~~  
+-~~Ohjeet pelaamiseen~~  
+-~~Pelin päätyttyä kysytään nimeä, joka voidaan sitten tallentaa~~  
 
  _Itse peli_\
--Käyttäjän kontrolloima hahmo[done]\
--Hahmo "kuolee" jos osuu muihin objekteihin[done]\
--Toiminnallisuus tuhota muita objekteja,~~josta saa pisteitä~~[done]  
+-~~Käyttäjän kontrolloima hahmo~~  
+-~~Hahmo "kuolee" jos osuu kun health menee nollaan. Health vähenee, kun viholliset osuvat hahmoon panoksilla tai aluksellaan~~  
+-~~Toiminnallisuus tuhota muita objekteja~~ 
+-~~Viholliset ampuvat hahmoa kohti~~  
 
 ## *Jatkokehitysideoita*
--Hiscoret aikaan perustuen\
--Vaikeustason muuttaminen ennen peliä\
--Hahmon eri tavat tuhota objekteja (ei prioriteetti)\
--Vihollisobjektien progressiivinen vaikeutuminen[toiminnallisuus vihollisaaltoihin done]\
--Boss-vihollinen[done]\
--viholliset ampuu hahmoa kohti[done]
+-~~Hiscoret aikaan perustuen, käyttäen Google Sheetsejä~~  
+-~~Vaikeustason muuttaminen ennen peliä, ladataan tiedostosta.~~  
+-Hahmon eri tavat tuhota objekteja SCRAPPED  
+-~~Vihollisten toteuttaminen aaltoina/kierroksina~~  
+-~~Boss-vihollinen~~  

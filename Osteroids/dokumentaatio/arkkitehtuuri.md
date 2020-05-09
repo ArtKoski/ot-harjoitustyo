@@ -6,17 +6,17 @@ Ohjelman pakkausrakenne on seuraavanlainen:
 <img src="https://github.com/ArtKoski/ot-harjoitustyo/blob/master/Osteroids/dokumentaatio/kuvat/draft.png">
 <p>
 GUI sisältää graafisen käyttöliittymän sekä tarvittavat JavaFX-toiminnot peliä
-varten. Itse pelin logiikka taas löytyy gamelogic-pakkauksesta.
+varten. Pelin logiikka, elikkä Sprite-oliot, löytyvät gamelogic-pakkauksesta. Muu logiikka, esim. pistetuloksiin liittyvät,
+löytyy applogic-pakkauksesta.
 </p>
 
 
-### Alustava logiikka eri näkymille
+### Logiikka eri näkymille
 <p>
-Eri näkymät ovat GUI-luokassa eri Scene-olioita. Idea on, että alkuskenestä pääsee joko ohjeisiin tai sitten
-suoraan peliin, ja tarkoitus on lisätä vielä mahdollisuus muunnella pelin konfiguraatiota, esim. vaikeustasoa. 
-Pelin loputtua siirrytään skeneen, jossa käyttäjä pystyy joko pelaamaan uudestaan tai katsomaan lopputuloksia.
-Seuraava sekvenssikaavio kuvaa skenejen toiminnallisuutta. Nuolet ovat Button-olioita, ja LOSE/WIN viittaa pelin
-lopputulokseen.
+Alla oleva sekvennsikaavio kuvaa sovelluksen toiminnallisuutta graafisen käyttöliittymän kannalta.
+Scene-laatikot ovat siis omia skene-olioita joiden välillä voidaan hyppiä nappien (kuvassa nuolia) avulla.
+Poikkeuksena 'LOSE/WIN' -nuoli, joka kuvaa pelin päätöstä. Monissa skeneissä myös on Exit-nappi, joka jätettiin
+kuvasta pois.
 </p>
 <img src="https://github.com/ArtKoski/ot-harjoitustyo/blob/master/Osteroids/dokumentaatio/kuvat/GUI.png">
 
@@ -29,10 +29,17 @@ voivat käyttää samaa die()-metodia, jonka avulla ne voidaan hävittää ruudu
 </p>
 
 ### Tietojen tallenus/haku
--Toivottavasti ennen projektin deadlinea.
+-Sovellus käyttää Google Sheets -palvelua tulosten säilyttämiseen. Applogic-pakkauksen luokka SheetsLeaderBoards on vastuussa yhteyden muodostamisesta
+google-spreadsheetsiin. Tähän tarvitaan tiedostoja properties.config sekä credentials.json, jotka löytyvät projektin hakemistosta.  Kun tuloksia halutaan päivittää, niin 
+luokka ensin hakee taulukossa olevat tulokset itselleen prioriteettijonoon. Tämän jälkeen uusi tulos lisätään jonoon, jonka jälkeen tulokset päivitetään taulukkoon. Tulosten
+vertailu perustuu Score-luokan compareTo-metodiin (Kierrokset>pisteet>aika), ja näin prioriteettijono pitää tulokset järjestyksessä. Nykyinen toteutus on melko raskas ja hidas,
+mutta se saa homman hoidettua.  
 
 ## Ohjelman rakenteen potentiaaliset miinukset
-<p>
-JavaFX:n animointi pohjautuu animationTimer-metodiin. Tämän takia kyseisen metodin sisällä on iso kasa koodia, joka pelin laajentuessa vain menee sekavammaksi.
+<p
+GUI-luokka sisältää jonkin verran loogisia operaatioita, jotka voitaisiin hoitaa muualla.
+AnimationTimer-lohko on suuri, joka johti minut kyseenalaistamaan toteutustani.
+Tietojen tallennus sekä haku Sheets-taulusta on raskaasti toteutettu. Toisaalta maksimikoko taulukon alkioille on vain 5.
+loadDifficulty-luokan tiedostonluku ja arvojen palautus GUI:lle ei ollut ihan optimaalinen.
 </p>
 

@@ -19,6 +19,7 @@ public class Enemy2 extends Sprite {
      * Create a round 2 enemy.
      * @param x - spawn coordinate x
      * @param y  -spawn coordinate y
+     * @param hp - amount of health
      */
     public Enemy2(int x, int y, double hp) {
         super(new Polygon(-20, -10, 10, 0, -20, 10), x, y, hp);

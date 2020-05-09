@@ -15,12 +15,11 @@ import javafx.scene.shape.Polygon;
  */
 public class EnemySpecial extends Sprite {
     
-    double enrage;
-
     /**
      * Spawn a boss enemy. 
      * @param x - spawn coordinate x
      * @param y - spawn coordinate y
+     * @param hp - amount of health
      */
     public EnemySpecial(int x, int y, double hp) {
         super(new Polygon(-50, -50, 50, 50, -50, 50), x, y, hp);
@@ -29,13 +28,5 @@ public class EnemySpecial extends Sprite {
     @Override
     public void patrol() {
     }
-    
-    public void setEnrage(double val) {
-        this.enrage = val;
-    }
-    public double getEnrage() {
-        return this.enrage;
-    }
-    
 
 }

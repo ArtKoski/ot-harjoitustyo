@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package ui;
+package applogic;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -15,18 +15,25 @@ import java.util.Properties;
 /**
  *
  * @author artkoski
+ * Loads the configuration file for the game settings.
  */
 public class loadDifficulty {
 
-    int difficulty;
-
-    ArrayList<Double> returnList;
-
+    private int difficulty;
+    private ArrayList<Double> returnList;
+    /**
+     * Constructor defining which settings are to be loaded.
+     * @param setting - 1: normal, 2: hard
+     */
     public loadDifficulty(int setting) {
         this.difficulty = setting;
         returnList = new ArrayList<Double>();
     }
 
+    /**
+     * Reads the configuration file and returns a list of values relevant to the difficulty setting.
+     * @return 
+     */
     public ArrayList<Double> difficultyConfig() {
         try (InputStream input = new FileInputStream("config.properties")) {
 
@@ -48,6 +55,7 @@ public class loadDifficulty {
             }
 
         } catch (IOException ex) {
+            System.out.println("Problems with config..");
             ex.printStackTrace();
         }
         return returnList;

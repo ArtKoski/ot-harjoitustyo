@@ -29,12 +29,12 @@ public abstract class Sprite {
     //      "http://icons.iconarchive.com/icons/raindropmemory/legendora/64/Hero-icon.png";
     //Image image;
     //ImageView imageView;
-    public Polygon spritePolygon;
-    public Point2D movement;
-    public double health;
-    double maxHealth;
-    public boolean alive;
-    double tmpr;
+    private Polygon spritePolygon;
+    private Point2D movement;
+    private double health;
+    private double maxHealth;
+    private boolean alive;
+    private double tmpr;
 
     /**
      * Create a sprite.
@@ -52,8 +52,6 @@ public abstract class Sprite {
         this.maxHealth = hp;
         this.spritePolygon.setFill(Color.GREEN);
         alive = true;
-        
-
         this.movement = new Point2D(0, 0);
     }
 
@@ -88,12 +86,6 @@ public abstract class Sprite {
     }
 
     void hitColour() { //CHECK FUNCTIONALITY
-        Paint colourATM = spritePolygon.getFill();
-        /*for (int i = 0; i < 1000; i++) {
-
-            this.spritePolygon.setFill(Color.LIGHTPINK);
-            this.spritePolygon.setFill(colourATM);                          //TÄHÄN JOKU PIENI TIMER
-        }*/
     }
 
     /**
@@ -124,7 +116,7 @@ public abstract class Sprite {
         for (int i = 1; i <= 100; i++) {
             this.spritePolygon.setOpacity(spritePolygon.getOpacity() - 0.01);
         }
-*/
+         */
     }
 
     /**
@@ -140,16 +132,19 @@ public abstract class Sprite {
 
     /**
      * Turns the sprite to the left by 'amount'.
+     *
      * @param amount - how much the sprite is turned left
      */
     public void toLeft(double amount) {
         this.spritePolygon.setRotate(this.spritePolygon.getRotate() - amount);
         slowDown();
     }
-/**
- * Turns the sprite to the right by 'amount'.
- * @param amount - how much the sprite is turned right
- */
+
+    /**
+     * Turns the sprite to the right by 'amount'.
+     *
+     * @param amount - how much the sprite is turned right
+     */
     public void toRight(double amount) {
         this.spritePolygon.setRotate(this.spritePolygon.getRotate() + amount);
         slowDown();
@@ -188,15 +183,17 @@ public abstract class Sprite {
         this.movement = this.movement.add(muutosX, muutosY);
 
     }
-/**
- * Slows down sprites movement a little.
- */
+
+    /**
+     * Slows down sprites movement a little.
+     */
     public void slowDown() {
         this.movement = this.movement.subtract(movement.getX() * 0.0005, movement.getY() * 0.0005);
     }
-/**
- * Slows down movement a lot. 
- */
+
+    /**
+     * Slows down movement a lot.
+     */
     public void slowDownShift() {
         this.movement = this.movement.subtract(movement.getX() * 0.005, movement.getY() * 0.005);
     }
@@ -239,8 +236,9 @@ public abstract class Sprite {
     public double getHealth() {
         return Math.round(health);
     }
+
     public double getHealthPercentage() {
-        return health*1.0/maxHealth*1.0;
+        return health * 1.0 / maxHealth * 1.0;
     }
 
     /**
@@ -273,9 +271,11 @@ public abstract class Sprite {
     public boolean getLiving() {
         return alive;
     }
-/**
- * Method for sprites patrol movement. Different for every sprite, thus defined in sub-classes.
- */
+
+    /**
+     * Method for sprites patrol movement. Different for every sprite, thus
+     * defined in sub-classes.
+     */
     public void patrol() {
     }
 }

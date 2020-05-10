@@ -32,8 +32,14 @@ voivat käyttää samaa die()-metodia, jonka avulla ne voidaan hävittää ruudu
 -Sovellus käyttää Google Sheets -palvelua tulosten säilyttämiseen. Applogic-pakkauksen luokka SheetsLeaderBoards on vastuussa yhteyden muodostamisesta
 google-spreadsheetsiin. Tähän tarvitaan tiedostoja properties.config, credentials.json sekä StoredCrendentials, jotka löytyvät projektin hakemistosta.  Kun tuloksia halutaan päivittää, niin 
 luokka ensin hakee taulukossa olevat tulokset itselleen prioriteettijonoon. Tämän jälkeen uusi tulos lisätään jonoon, jonka jälkeen tulokset päivitetään taulukkoon. Tulosten
-vertailu perustuu Score-luokan compareTo-metodiin (Kierrokset>pisteet>aika), ja näin prioriteettijono pitää tulokset järjestyksessä. Nykyinen toteutus on melko raskas ja hidas,
-mutta se saa homman hoidettua.  
+vertailu perustuu Score-luokan compareTo-metodiin (Kierrokset>pisteet>aika), ja näin prioriteettijono pitää tulokset järjestyksessä. 
+
+Alla havainnollistus config.properties tietojensäilytyksestä 
+``
+multiplierEasy=1
+multiplierHard=3
+``
+Eli kun valitaan vaikeustasoksi easy, niin tiedostosta haetaan multiplierEasy arvo.
 
 ## Ohjelman rakenteen potentiaaliset miinukset
 <p

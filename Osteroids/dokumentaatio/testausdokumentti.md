@@ -27,4 +27,5 @@ Viimeisimmässä versiossa checkstyle-virheitä löytyi 5 kappaletta, joista lä
 
 
 ## Järjestelmätestaus
-Ohjelmaa on testattu vain Unix-järjestelmällä.  
+Ohjelmaa on testattu vain Unix-järjestelmällä. Ei siis varmuutta Windows/Mac-toimivuudesta, mutta fuksiläppärillä
+sekä VMWare Horizon clientillä todettu toimivan.   

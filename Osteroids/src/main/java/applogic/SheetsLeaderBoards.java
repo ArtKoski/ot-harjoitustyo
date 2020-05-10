@@ -65,6 +65,7 @@ public class SheetsLeaderBoards {
     private static PriorityQueue<Score> topTenEz;
     private static PriorityQueue<Score> topTenHard;
     private static PriorityQueue<Score> topTenTest;
+    private static long longTime = 2_419_200;
 
     private static Credential authorize() throws IOException, GeneralSecurityException {
 
@@ -81,16 +82,14 @@ public class SheetsLeaderBoards {
                 GoogleNetHttpTransport.newTrustedTransport(), JacksonFactory.getDefaultInstance(),
                 clientSecrets, scopes)
                 .setDataStoreFactory(new FileDataStoreFactory(new java.io.File("tokens")))
-                .setAccessType("online")
+                .setAccessType("offline")
                 .build();
 
         Credential credential = new AuthorizationCodeInstalledApp(
                 flow, new LocalServerReceiver())
                 .authorize("user");
+        credential.setExpiresInSeconds(longTime);
         return credential;
-    }
-    
-    public static void main(String[] args) throws IOException, GeneralSecurityException {
     }
 
     private static Sheets getSheetsService() throws IOException, GeneralSecurityException {
@@ -215,6 +214,7 @@ public class SheetsLeaderBoards {
     public PriorityQueue<Score> search(int difficulty) throws IOException, GeneralSecurityException, ParseException {
         String range = "B2:E5";
         sheetsService = getSheetsService();
+
         PriorityQueue<Score> top5 = new PriorityQueue<>();
         if (difficulty == 1) {
             topTenEz = new PriorityQueue<>();

@@ -38,9 +38,12 @@ Alla havainnollistus config.properties tietojensäilytyksestä
  
 ``
 multiplierEasy=1  
-
+``
+``
 multiplierHard=3
 ``
+  
+
 Eli kun valitaan vaikeustasoksi easy, niin tiedostosta haetaan multiplierEasy arvo.
 
 ## Ohjelman rakenteen potentiaaliset miinukset

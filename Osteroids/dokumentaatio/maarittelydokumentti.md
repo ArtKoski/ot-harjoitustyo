@@ -10,10 +10,10 @@ Pelkästään peruskäyttäjä.
 ## *Käyttöliittymä*
 
 Sovelluksen näkymät:
-1.) Alkuskene
-1.5) Instructions-skene
+1.) Alkuskene  
+1.5) Instructions-skene  
 2.) Peliskene  
-3.) Voitto/Häviö-scene 
+3.) Voitto/Häviö-scene   
 4.) Leaderboards-skene sekä tallennusmahdollisuus "save-scene"
 
 ## *Perusversion toiminnallisuus*

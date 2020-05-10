@@ -3,7 +3,7 @@
 <p>
 Ohjelman pakkausrakenne on seuraavanlainen:
 </p>
-<img src="https://github.com/ArtKoski/ot-harjoitustyo/blob/master/Osteroids/dokumentaatio/kuvat/draft.png">
+<img src="https://github.com/ArtKoski/ot-harjoitustyo/blob/master/Osteroids/dokumentaatio/kuvat/Draft.png">
 <p>
 GUI sisältää graafisen käyttöliittymän sekä tarvittavat JavaFX-toiminnot peliä
 varten. Pelin logiikka, elikkä Sprite-oliot, löytyvät gamelogic-pakkauksesta. Muu logiikka, esim. pistetuloksiin liittyvät,

@@ -34,9 +34,11 @@ google-spreadsheetsiin. Tähän tarvitaan tiedostoja properties.config, credenti
 luokka ensin hakee taulukossa olevat tulokset itselleen prioriteettijonoon. Tämän jälkeen uusi tulos lisätään jonoon, jonka jälkeen tulokset päivitetään taulukkoon. Tulosten
 vertailu perustuu Score-luokan compareTo-metodiin (Kierrokset>pisteet>aika), ja näin prioriteettijono pitää tulokset järjestyksessä. 
 
-Alla havainnollistus config.properties tietojensäilytyksestä 
+Alla havainnollistus config.properties tietojensäilytyksestä  
+ 
 ``
-multiplierEasy=1  	
+multiplierEasy=1  
+
 multiplierHard=3
 ``
 Eli kun valitaan vaikeustasoksi easy, niin tiedostosta haetaan multiplierEasy arvo.

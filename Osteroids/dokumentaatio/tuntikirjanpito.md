@@ -30,5 +30,6 @@
 |8.5	|7	|bugien fixailu, logiikan erottelu 	|
 |	|	|UI-toiminnoista, hienosäätöä		|	
 |9.5	|7	|viimeistelyä:javadoc,checkstyle,testit	|	
-
-|	|=60	|
+|10.5	|3	|viimeiset siistimiset sekä paniikki	|
+|	|	|Google-Sheetsin toimivuudesta....	|
+	|=63	|

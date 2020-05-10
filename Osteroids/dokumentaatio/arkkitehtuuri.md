@@ -36,8 +36,8 @@ vertailu perustuu Score-luokan compareTo-metodiin (Kierrokset>pisteet>aika), ja 
 
 Alla havainnollistus config.properties tietojensäilytyksestä 
 ``
-multiplierEasy=1
-multiplierHard=3
+multiplierEasy=1\
+multiplierHard=3\
 ``
 Eli kun valitaan vaikeustasoksi easy, niin tiedostosta haetaan multiplierEasy arvo.
 

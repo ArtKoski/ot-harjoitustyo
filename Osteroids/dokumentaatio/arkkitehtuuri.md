@@ -39,6 +39,8 @@ Alla havainnollistus config.properties tietojensäilytyksestä
 ``
 multiplierEasy=1  
 ``
+  
+
 ``
 multiplierHard=3
 ``

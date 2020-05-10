@@ -3,7 +3,7 @@
 ### Config
 Sovellus lukee tiedostosta *config.properties* sovelluksen tarvitsemia arvoja, liittyen leaderboards-toiminnallisuuteen
 sekä vaikeustason määrittelemiseen. 
-Sovellus olettaa sekä *config.properties* että *credentials.json* -tiedostojen olevan käynnistyshakemistossa. Eli kun jar-tiedosto
+Sovellus olettaa sekä *config.properties*, *credentials.json* että *tokens/StoredCredential* -tiedostojen olevan käynnistyshakemistossa. Eli kun jar-tiedosto
 suoritetaan, niin kyseisten tiedostojen pitää löytyä samasta kansiosta.
 
 
@@ -11,7 +11,7 @@ suoritetaan, niin kyseisten tiedostojen pitää löytyä samasta kansiosta.
 
 Kun olet ladannut sovelluksen jar-tiedoston, ohjelma käynnistetään komennolla  
 ``
-java -jar Osteroids.jar
+java -jar Osteroids-1.0.jar
 ``
 
 ### Peli

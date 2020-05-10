@@ -9,6 +9,7 @@ Applogic sisälsi yhden metodin joka muokkasi varsinaisia leaderboards-tuloksia,
 Toinen metodi jonka päätin jättää testaamatta liittyi JavaFX komponenttiin. Jos näitä kahta metodia ei lasketa
 raporttiin, niin applogic kattavuus nousee melkein sataan, jolloin kokonaiskattavuus on ~90%.
 
+GUI-luokka tosiaan otettu pois raportista.
 
 ## Yksikkötesteistä
 
@@ -21,7 +22,9 @@ Kolmas testiluokka (scoreAndLeaderboardTest) testaa piste-luokkaa sekä leaderbo
 Jälkimmäisen testaus osoittautui hankalaksi, ja päätin tehdä testisyötteille oman taulukon ja metodin. 
 Parhaat testit leaderboardsin toteuttamiseen osoittautuivat olevan lopulta käytännön kokeiluja.
 
+## CheckStyle
+Viimeisimmässä versiossa checkstyle-virheitä löytyi 5 kappaletta, joista lähes kaikki liittyivät 'liian' suuriin metodeihin.
+
 
 ## Järjestelmätestaus
-
-tänne vielä---------
+Ohjelmaa on testattu vain Unix-järjestelmällä.  

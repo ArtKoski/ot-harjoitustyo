@@ -89,6 +89,9 @@ public class SheetsLeaderBoards {
                 .authorize("user");
         return credential;
     }
+    
+    public static void main(String[] args) throws IOException, GeneralSecurityException {
+    }
 
     private static Sheets getSheetsService() throws IOException, GeneralSecurityException {
         Credential credential = authorize();
@@ -102,7 +105,7 @@ public class SheetsLeaderBoards {
      * Class for loading essential values from config.properties to variables.
      * Needs to be executed before attempting to read or write from database.
      */
-    public void init() {
+    public static void init() {
         try (InputStream input = new FileInputStream("config.properties")) {
 
             Properties prop = new Properties();

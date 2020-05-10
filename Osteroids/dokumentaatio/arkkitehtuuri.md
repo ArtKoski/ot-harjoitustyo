@@ -30,7 +30,7 @@ voivat käyttää samaa die()-metodia, jonka avulla ne voidaan hävittää ruudu
 
 ### Tietojen tallenus/haku
 -Sovellus käyttää Google Sheets -palvelua tulosten säilyttämiseen. Applogic-pakkauksen luokka SheetsLeaderBoards on vastuussa yhteyden muodostamisesta
-google-spreadsheetsiin. Tähän tarvitaan tiedostoja properties.config sekä credentials.json, jotka löytyvät projektin hakemistosta.  Kun tuloksia halutaan päivittää, niin 
+google-spreadsheetsiin. Tähän tarvitaan tiedostoja properties.config, credentials.json sekä StoredCrendentials, jotka löytyvät projektin hakemistosta.  Kun tuloksia halutaan päivittää, niin 
 luokka ensin hakee taulukossa olevat tulokset itselleen prioriteettijonoon. Tämän jälkeen uusi tulos lisätään jonoon, jonka jälkeen tulokset päivitetään taulukkoon. Tulosten
 vertailu perustuu Score-luokan compareTo-metodiin (Kierrokset>pisteet>aika), ja näin prioriteettijono pitää tulokset järjestyksessä. Nykyinen toteutus on melko raskas ja hidas,
 mutta se saa homman hoidettua.  
@@ -41,5 +41,8 @@ GUI-luokka sisältää jonkin verran loogisia operaatioita, jotka voitaisiin hoi
 AnimationTimer-lohko on suuri, joka johti minut kyseenalaistamaan toteutustani.
 Tietojen tallennus sekä haku Sheets-taulusta on raskaasti toteutettu. Toisaalta maksimikoko taulukon alkioille on vain 5.
 loadDifficulty-luokan tiedostonluku ja arvojen palautus GUI:lle ei ollut ihan optimaalinen.
+
+En ehtinyt perehtyä Googlen API:n käyttöön tarpeeksi huolellisesti, ja tämän takia käyttäjän todennus on hyvin kyseenalainen. Koska tietoturva ei kuitenkaan ole arvosteltava asia, niin 
+jätin asian sikseen. (Ja tämän takia siis tarvitaan sekä tiedosto credentials.json että tokens/StoredCredentials).
 </p>
 

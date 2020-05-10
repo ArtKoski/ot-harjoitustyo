@@ -60,18 +60,15 @@ public class GUI extends Application {
     private List<Bullet> enemyAmmo = new ArrayList<>();
     private List<Sprite> enemies = new ArrayList<>();
     private Button startGameFromTut;
-    private int round = 0;
     private Hero hero;
-    private int score = 0;
-    private long timer;
-    private boolean cooldown = false;
-    private long cdTimer = 0;
     private boolean cleared;
     private long roundTimerStart;
     private long roundTimerEnd;
     private Label gameOverLabel = new Label();
     private Text roundATM = new Text();
+    private int round = 0;
     private Text scoreText = new Text();
+    private int score = 0;
     private double multiplier = 1;
     private int difficulty;
     private final PriorityQueue<Score> bestTimes = new PriorityQueue<Score>();
@@ -149,25 +146,6 @@ public class GUI extends Application {
                     hero.accelerate(0.0005);
                 }
 
-                //IMMUNITY COOLDOWN && TIMER, little broken ATM
-                /*if (painetutNapit.getOrDefault(KeyCode.E, false) && cooldown==false) {
-                    cdTimer=0;
-                    cooldown=true;
-                    hero.immunityOn();
-                    timer = nykyhetki;
-                }
-                if(nykyhetki>(timer+1050000000)) {
-                    hero.immunityOff();
-                }
-                if(cooldown==true && cdTimer>4000) {
-                    cdTimer=0;
-                    System.out.println("valmis"); // MAYBE AN ICON HERE OR JUST TEXT ON SCREEN
-                    
-                    cooldown=false;
-                } else{
-                    cdTimer++;
-                }
-                 */
                 //HERO SHOOT
                 if (painetutNapit.getOrDefault(KeyCode.X, false) && ammo.size() < 2) {
                     Bullet shot = new Bullet((int) hero.getPoly().getTranslateX(), (int) hero.getPoly().getTranslateY());
@@ -397,29 +375,37 @@ public class GUI extends Application {
         Text selectDifficulty = new Text("");
         ruudunSisalla2.getChildren().addAll(hardToggle, normalToggle);
         ruudunSisalla2.setAlignment(Pos.BOTTOM_CENTER);
-        Text DifficultyInfo = new Text("");
-        DifficultyInfo.setTextAlignment(TextAlignment.CENTER);
+        Text difficultyInfo = new Text("");
+        difficultyInfo.setTextAlignment(TextAlignment.CENTER);
 
         hardToggle.setOnAction(click -> {
-            DifficultyInfo.setText("Hard mode selected.\n"
-                    + "Enemies shoot faster and do slightly more damage.");
-            selectDifficulty.setText("");
             if (normalToggle.isSelected()) {
                 normalToggle.setSelected(false);
             }
+            if (!hardToggle.isSelected()) {
+                difficultyInfo.setText("");
+            } else {
+                difficultyInfo.setText("Hard mode selected.\n"
+                        + "Enemies shoot faster and do slightly more damage.");
+                selectDifficulty.setText("");
+            }
         });
         normalToggle.setOnAction(click -> {
-            DifficultyInfo.setText("Normal mode selected.");
-            selectDifficulty.setText("");
             if (hardToggle.isSelected()) {
                 hardToggle.setSelected(false);
+            }
+            if (!normalToggle.isSelected()) {
+                difficultyInfo.setText("");
+            } else {
+                difficultyInfo.setText("Normal mode selected.");
+                selectDifficulty.setText("");
             }
         });
 
         Button startGameButton = new Button("START");
         Button instructionsButton = new Button("HOW TO PLAY");
         Button exitButton = new Button("EXIT");
-        ruudunSisalla.getChildren().addAll(startGameButton, instructionsButton, exitButton, DifficultyInfo, selectDifficulty);
+        ruudunSisalla.getChildren().addAll(startGameButton, instructionsButton, exitButton, difficultyInfo, selectDifficulty);
         ruudunSisalla.setAlignment(Pos.CENTER);
 
         ruutu.setCenter(ruudunSisalla);
